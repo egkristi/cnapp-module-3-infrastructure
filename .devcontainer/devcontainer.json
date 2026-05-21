@@ -1,0 +1,35 @@
+{
+  "name": "Azure Terraform Infrastructure",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "version": "1.9.8",
+      "tflint": "latest",
+      "terragrunt": "none"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "HashiCorp.terraform",
+        "ms-azuretools.vscode-azureterraform",
+        "ms-vscode.azure-account",
+        "GitHub.vscode-github-actions",
+        "redhat.vscode-yaml",
+        "EditorConfig.EditorConfig"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "terraform.languageServer.enable": true,
+        "terraform.format.enable": true,
+        "files.associations": {
+          "*.tfvars": "terraform"
+        }
+      }
+    }
+  },
+  "postCreateCommand": "terraform -version && az version && ./scripts/tf.sh fmt-check || true",
+  "remoteUser": "vscode"
+}

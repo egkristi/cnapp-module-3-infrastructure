@@ -1,0 +1,13 @@
+subscription_id     = "00000000-0000-0000-0000-000000000000"
+tenant_id           = "00000000-0000-0000-0000-000000000000"
+location            = "westeurope"
+github_organization = "your-org-or-user"
+github_repository   = "your-repo"
+
+# Optional: set a globally unique value yourself, or leave null to generate one.
+state_storage_account_name = null
+
+# Single identity used for both GitHub environments.
+identity_name = "id-github-terraform"
+
+github_environments = ["dev", "prod"]
