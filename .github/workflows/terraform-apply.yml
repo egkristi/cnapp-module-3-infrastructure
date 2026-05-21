@@ -36,11 +36,13 @@ jobs:
 
     env:
       ARM_USE_OIDC: true
+      ARM_USE_AZUREAD: true
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      ARM_USE_AZUREAD: true
-      TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      TF_VAR_resource_group_name: ${{ vars.RESOURCE_GROUP_NAME }}
+      TF_VAR_location: ${{ vars.LOCATION }}
 
     steps:
       - name: Checkout
@@ -76,11 +78,13 @@ jobs:
 
     env:
       ARM_USE_OIDC: true
+      ARM_USE_AZUREAD: true
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      ARM_USE_AZUREAD: true
-      TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      TF_VAR_resource_group_name: ${{ vars.RESOURCE_GROUP_NAME }}
+      TF_VAR_location: ${{ vars.LOCATION }}
 
     steps:
       - name: Checkout
