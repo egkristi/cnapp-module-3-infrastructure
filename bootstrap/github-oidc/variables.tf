@@ -37,13 +37,12 @@ variable "state_resource_group_name" {
 }
 
 variable "state_storage_account_name" {
-  description = "Globally unique storage account name for Terraform state. Leave null to generate one."
+  description = "Globally unique Azure Storage Account name for Terraform state. Must be 3-24 lowercase letters and numbers."
   type        = string
-  default     = null
 
   validation {
-    condition = var.state_storage_account_name == null || can(regex("^[a-z0-9]{3,24}$", var.state_storage_account_name))
-    error_message = "Storage account names must be 3-24 characters and only contain lowercase letters and numbers."
+    condition     = can(regex("^[a-z0-9]{3,24}$", var.state_storage_account_name))
+    error_message = "state_storage_account_name must be 3-24 characters and contain only lowercase letters and numbers."
   }
 }
 
