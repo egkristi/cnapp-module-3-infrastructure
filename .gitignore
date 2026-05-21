@@ -8,7 +8,7 @@ crash.*.log
 !*.tfvars.example
 
 # Keep .terraform.lock.hcl committed for reproducible provider selections.
-
+*-outputs.json
 # Local overrides
 override.tf
 override.tf.json
