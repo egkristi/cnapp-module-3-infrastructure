@@ -72,9 +72,14 @@ jobs:
     name: Terraform plan prod
     if: github.event_name == 'workflow_dispatch' && inputs.environment == 'prod'
     uses: ./.github/workflows/terraform-plan-reusable.yml
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: read
     with:
       environment: prod
       artifact_name: tfplan
+    secrets: inherit
 
   apply-prod:
     name: Terraform apply prod
