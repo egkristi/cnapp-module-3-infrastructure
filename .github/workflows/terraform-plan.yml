@@ -6,6 +6,7 @@ on:
       - "**/*.tf"
       - "**/*.tfvars"
       - ".github/workflows/*.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,9 +16,6 @@ permissions:
 jobs:
   plan:
     name: Terraform plan (${{ matrix.environment }})
-    runs-on: ubuntu-latest
-    environment: ${{ matrix.environment }}
-
     strategy:
       fail-fast: false
       matrix:
@@ -25,46 +23,7 @@ jobs:
           - dev
           - prod
 
-    defaults:
-      run:
-        working-directory: environments/${{ matrix.environment }}
-
-    env:
-      ARM_USE_OIDC: true
-      ARM_USE_AZUREAD: true
-      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
-      TF_VAR_resource_group_name: ${{ vars.RESOURCE_GROUP_NAME }}
-      TF_VAR_location: ${{ vars.LOCATION }}
-      TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
-      TF_VAR_key_vault_name: ${{ vars.KEY_VAULT_NAME }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Azure login using OIDC
-        uses: azure/login@v2
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.8
-
-      - name: Terraform fmt
-        run: terraform fmt -recursive -check ../..
-
-      - name: Terraform init
-        run: terraform init -input=false
-
-      - name: Terraform validate
-        run: terraform validate
-
-      - name: Terraform plan
-        run: terraform plan -input=false
+    uses: ./.github/workflows/terraform-plan-reusable.yml
+    with:
+      environment: ${{ matrix.environment }}
+      artifact_name: pr-tfplan

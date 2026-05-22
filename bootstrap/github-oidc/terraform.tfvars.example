@@ -1,13 +1,13 @@
 subscription_id     = "00000000-0000-0000-0000-000000000000"
 tenant_id           = "00000000-0000-0000-0000-000000000000"
 location            = "westeurope"
-github_organization = "your-org-or-user"
-github_repository   = "your-repo"
-
-# Optional: set a globally unique value yourself, or leave null to generate one.
-state_storage_account_name = null
-
-# Single identity used for both GitHub environments.
-identity_name = "id-github-terraform"
-
+github_organization = "msilabben"
+github_repository   = "cnapp-module-3-infrastructure"
 github_environments = ["dev", "prod"]
+
+identity_resource_group_name = "rg-github-oidc"
+identity_name                = "id-github-terraform"
+
+state_resource_group_name  = "rg-tfstate"
+state_storage_account_name = "sttfstatecnappinfra001"
+state_container_name       = "tfstate"

@@ -1,0 +1,89 @@
+name: Terraform plan reusable
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Environment to plan, for example dev or prod."
+        required: true
+        type: string
+      artifact_name:
+        description: "Name of the uploaded Terraform plan artifact."
+        required: false
+        type: string
+        default: tfplan
+    outputs:
+      artifact_name:
+        description: "Uploaded Terraform plan artifact name."
+        value: ${{ jobs.plan.outputs.artifact_name }}
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: read
+
+jobs:
+  plan:
+    name: Terraform plan (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+
+    outputs:
+      artifact_name: ${{ steps.plan_artifact.outputs.artifact_name }}
+
+    defaults:
+      run:
+        working-directory: environments/${{ inputs.environment }}
+
+    env:
+      ARM_USE_OIDC: true
+      ARM_USE_AZUREAD: true
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      TF_VAR_resource_group_name: ${{ vars.RESOURCE_GROUP_NAME }}
+      TF_VAR_location: ${{ vars.LOCATION }}
+      TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+      TF_VAR_key_vault_name: ${{ vars.KEY_VAULT_NAME }}
+
+    steps:
+      - name: Set plan artifact name
+        id: plan_artifact
+        run: echo "artifact_name=${{ inputs.artifact_name }}-${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Terraform fmt
+        run: terraform fmt -recursive -check ../..
+
+      - name: Terraform init
+        run: terraform init -input=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        run: terraform plan -input=false -out=tfplan
+
+      - name: Show Terraform plan
+        run: terraform show -no-color tfplan
+
+      - name: Upload Terraform plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.plan_artifact.outputs.artifact_name }}
+          path: environments/${{ inputs.environment }}/tfplan
+          retention-days: 1
