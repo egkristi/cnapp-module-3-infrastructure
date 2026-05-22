@@ -51,6 +51,12 @@ resource "azurerm_role_assignment" "terraform_subscription" {
   principal_id         = azurerm_user_assigned_identity.github_actions.principal_id
 }
 
+resource "azurerm_role_assignment" "terraform_rbac_administrator" {
+  scope                = data.azurerm_subscription.current.id
+  role_definition_name = "Role Based Access Control Administrator"
+  principal_id         = azurerm_user_assigned_identity.github_actions.principal_id
+}
+
 resource "azurerm_role_assignment" "terraform_state_blob_data_owner" {
   scope                = azurerm_storage_account.state.id
   role_definition_name = "Storage Blob Data Owner"
