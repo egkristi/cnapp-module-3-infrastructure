@@ -66,3 +66,13 @@ variable "aks_vm_size" {
   type        = string
   default     = "Standard_D2s_v3"
 }
+
+variable "acr_name" {
+  description = "Name of the existing Azure Container Registry."
+  type        = string
+}
+
+variable "acr_resource_group_name" {
+  description = "Resource group containing the existing Azure Container Registry."
+  type        = string
+}

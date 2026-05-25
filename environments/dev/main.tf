@@ -40,3 +40,14 @@ module "aks_cluster" {
     service = "aks"
   })
 }
+
+data "azurerm_container_registry" "existing" {
+  name                = var.acr_name
+  resource_group_name = var.acr_resource_group_name
+}
+
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  scope                = data.azurerm_container_registry.existing.id
+  role_definition_name = "AcrPull"
+  principal_id         = module.aks_cluster.kubelet_identity_object_id
+}

@@ -4,8 +4,13 @@ key_vault_administrator_principal_ids = [
 
 key_vault_secrets_user_principal_ids = []
 
+// AKS variables
 aks_cluster_name = "aks-cnapp-dev"
 aks_dns_prefix   = "aks-cnapp-dev"
 
 aks_node_count = 2
 aks_vm_size    = "Standard_D2s_v3"
+
+// Use existing Azure Container Registry
+acr_name                = "markusscnapplab"
+acr_resource_group_name = "markuss-cnapplab"
