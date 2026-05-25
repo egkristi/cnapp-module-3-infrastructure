@@ -14,9 +14,10 @@ resource "azurerm_kubernetes_cluster" "this" {
   }
 
   default_node_pool {
-    name       = var.default_node_pool_name
-    node_count = var.node_count
-    vm_size    = var.vm_size
+    name           = var.default_node_pool_name
+    node_count     = var.node_count
+    vm_size        = var.vm_size
+    vnet_subnet_id = var.subnet_id
   }
 
   network_profile {

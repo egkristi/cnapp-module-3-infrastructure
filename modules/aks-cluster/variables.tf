@@ -30,6 +30,11 @@ variable "default_node_pool_name" {
   default     = "agentpool"
 }
 
+variable "subnet_id" {
+  description = "Subnet ID for the AKS default node pool."
+  type        = string
+}
+
 variable "node_count" {
   description = "Number of nodes in the default node pool."
   type        = number
