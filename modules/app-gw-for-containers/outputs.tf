@@ -37,3 +37,8 @@ output "alb_identity_id" {
   description = "Resource ID of the ALB Controller managed identity."
   value       = azurerm_user_assigned_identity.alb_controller.id
 }
+
+output "alb_identity_client_id" {
+  description = "Client ID of the ALB Controller managed identity."
+  value       = module.app_gateway_for_containers.alb_identity_client_id
+}
