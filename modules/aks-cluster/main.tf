@@ -6,6 +6,9 @@ resource "azurerm_kubernetes_cluster" "this" {
 
   kubernetes_version = var.kubernetes_version
 
+  oidc_issuer_enabled       = true
+  workload_identity_enabled = true
+
   identity {
     type = "SystemAssigned"
   }
@@ -17,7 +20,7 @@ resource "azurerm_kubernetes_cluster" "this" {
   }
 
   network_profile {
-    network_plugin    = "kubenet"
+    network_plugin    = "azure"
     load_balancer_sku = "standard"
   }
 
