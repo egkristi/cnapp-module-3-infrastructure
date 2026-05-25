@@ -52,3 +52,11 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# Must be specified when updating a set of properties
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_node_pool
+variable "temporary_node_pool_name" {
+  description = "Temporary node pool name used when rotating the default AKS node pool."
+  type        = string
+  default     = "tmpagentpool"
+}
