@@ -14,3 +14,18 @@ aks_vm_size    = "Standard_D2s_v3"
 // Use existing Azure Container Registry
 acr_name                = "markusscnapplab"
 acr_resource_group_name = "markuss-cnapplab"
+
+// Network variables
+vnet_name          = "vnet-cnapp-dev"
+vnet_address_space = ["10.50.0.0/16"]
+
+aks_subnet_name             = "snet-aks-dev"
+aks_subnet_address_prefixes = ["10.50.0.0/22"]
+
+agfc_subnet_name             = "snet-agfc-dev"
+agfc_subnet_address_prefixes = ["10.50.4.0/24"]
+
+// Application Gateway for Containers
+agfc_name             = "agfc-cnapp-dev"
+agfc_frontend_name    = "frontend-cnapp-dev"
+agfc_association_name = "assoc-cnapp-dev"

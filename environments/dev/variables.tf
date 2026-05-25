@@ -76,3 +76,48 @@ variable "acr_resource_group_name" {
   description = "Resource group containing the existing Azure Container Registry."
   type        = string
 }
+
+variable "vnet_name" {
+  description = "Name of the virtual network."
+  type        = string
+}
+
+variable "vnet_address_space" {
+  description = "Address space for the virtual network."
+  type        = list(string)
+}
+
+variable "aks_subnet_name" {
+  description = "Name of the AKS subnet."
+  type        = string
+}
+
+variable "aks_subnet_address_prefixes" {
+  description = "Address prefixes for the AKS subnet."
+  type        = list(string)
+}
+
+variable "agfc_subnet_name" {
+  description = "Name of the Application Gateway for Containers subnet."
+  type        = string
+}
+
+variable "agfc_subnet_address_prefixes" {
+  description = "Address prefixes for the Application Gateway for Containers subnet."
+  type        = list(string)
+}
+
+variable "agfc_name" {
+  description = "Name of the Application Gateway for Containers resource."
+  type        = string
+}
+
+variable "agfc_frontend_name" {
+  description = "Name of the Application Gateway for Containers frontend."
+  type        = string
+}
+
+variable "agfc_association_name" {
+  description = "Name of the Application Gateway for Containers association."
+  type        = string
+}
