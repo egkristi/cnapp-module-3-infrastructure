@@ -12,7 +12,7 @@ resource "azurerm_key_vault" "this" {
   soft_delete_retention_days      = var.soft_delete_retention_days
 
   # Prefer RBAC over Key Vault access policies.
-  enable_rbac_authorization = true
+  rbac_authorization_enabled = true
 
   public_network_access_enabled = var.public_network_access_enabled
 
