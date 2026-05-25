@@ -22,3 +22,13 @@ output "aks_cluster_id" {
   description = "AKS cluster ID."
   value       = module.aks_cluster.id
 }
+
+output "alb_identity_client_id" {
+  description = "Client ID of the ALB Controller managed identity."
+  value       = module.app_gateway_for_containers.alb_identity_client_id
+}
+
+output "alb_identity_principal_id" {
+  description = "Principal ID of the ALB Controller managed identity."
+  value       = module.app_gateway_for_containers.alb_identity_principal_id
+}

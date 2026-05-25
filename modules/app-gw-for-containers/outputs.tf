@@ -22,3 +22,18 @@ output "association_id" {
   description = "Application Gateway for Containers association ID."
   value       = azurerm_application_load_balancer_subnet_association.this.id
 }
+
+output "alb_identity_client_id" {
+  description = "Client ID of the ALB Controller managed identity."
+  value       = azurerm_user_assigned_identity.alb_controller.client_id
+}
+
+output "alb_identity_principal_id" {
+  description = "Principal ID of the ALB Controller managed identity."
+  value       = azurerm_user_assigned_identity.alb_controller.principal_id
+}
+
+output "alb_identity_id" {
+  description = "Resource ID of the ALB Controller managed identity."
+  value       = azurerm_user_assigned_identity.alb_controller.id
+}

@@ -121,3 +121,14 @@ variable "agfc_association_name" {
   description = "Name of the Application Gateway for Containers association."
   type        = string
 }
+
+variable "alb_identity_name" {
+  description = "Name of the ALB Controller user-assigned managed identity."
+  type        = string
+}
+
+variable "alb_controller_namespace" {
+  description = "Namespace where ALB Controller will be installed."
+  type        = string
+  default     = "azure-alb-system"
+}

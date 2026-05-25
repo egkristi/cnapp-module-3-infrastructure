@@ -33,3 +33,30 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "alb_identity_name" {
+  description = "Name of the user-assigned managed identity for ALB Controller."
+  type        = string
+}
+
+variable "aks_oidc_issuer_url" {
+  description = "AKS OIDC issuer URL for Workload Identity federation."
+  type        = string
+}
+
+variable "aks_node_resource_group_name" {
+  description = "AKS managed node resource group name."
+  type        = string
+}
+
+variable "alb_controller_namespace" {
+  description = "Kubernetes namespace where ALB Controller will run."
+  type        = string
+  default     = "azure-alb-system"
+}
+
+variable "alb_controller_service_account_name" {
+  description = "Kubernetes service account used by ALB Controller."
+  type        = string
+  default     = "alb-controller-sa"
+}

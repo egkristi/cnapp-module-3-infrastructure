@@ -74,8 +74,13 @@ module "app_gateway_for_containers" {
   association_name      = var.agfc_association_name
   association_subnet_id = module.network.agfc_subnet_id
 
+  alb_identity_name            = var.alb_identity_name
+  aks_oidc_issuer_url          = module.aks_cluster.oidc_issuer_url
+  aks_node_resource_group_name = module.aks_cluster.node_resource_group
+  alb_controller_namespace     = var.alb_controller_namespace
+
   tags = merge(var.tags, {
-    service = "app-gw-for-containers"
+    service = "app-gateway-for-containers"
   })
 }
 
