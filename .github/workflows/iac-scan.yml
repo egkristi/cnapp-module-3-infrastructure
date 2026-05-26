@@ -1,0 +1,63 @@
+name: IaC
+
+on:
+  workflow_call:
+    inputs:
+      artifact_name:
+        description: "Plan to scan"
+        required: true
+        type: string
+      environment:
+        description: "Plan location"
+        required: true
+        type: string
+
+    outputs:
+      artifact_name:
+        description: "IaC scanning results"
+        value: ${{ jobs.plan.outputs.artifact_name }}
+
+
+jobs:
+  trivy:
+    runs-on: ubuntu-22.04
+    container:
+      image: aquasec/trivy:0.70.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Terraform plan
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: environments/${{ inputs.environment }}
+
+      - name: Run Trivy
+        run: trivy config --format sarif -o trivy_results.sarif environments/${{ inputs.environment }}/${{ inputs.tfplan }}
+
+      - name: Upload Trivy SARIF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-results
+          path: trivy_results.sarif
+
+      - name: Upload Trivy SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy_results.sarif
+          category: trivy
+
+  opa:
+    if: false # Remove this to enable Policy as Code (PaC) with Open Policy Agent
+    needs: [ trivy ]
+    runs-on: ubuntu-22.04
+    container:
+      image: openpolicyagent/conftest:v0.59.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download SARIF artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Verify Trivy findings
+        run: conftest test trivy-results/trivy_results.sarif --parser json --policy policy/trivy.rego

@@ -26,6 +26,7 @@ jobs:
   plan:
     name: Terraform plan (${{ inputs.environment }})
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
 
     outputs:
       artifact_name: ${{ steps.plan_artifact.outputs.artifact_name }}
@@ -47,12 +48,12 @@ jobs:
       TF_VAR_key_vault_name: ${{ vars.KEY_VAULT_NAME }}
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set plan artifact name
         id: plan_artifact
         run: echo "artifact_name=${{ inputs.artifact_name }}-${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
-
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - name: Azure login using OIDC
         uses: azure/login@v2

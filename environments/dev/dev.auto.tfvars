@@ -31,5 +31,5 @@ agfc_frontend_name    = "frontend-cnapp-dev"
 agfc_association_name = "assoc-cnapp-dev"
 
 // Application Gateway for Containers identities
-alb_identity_name         = "id-alb-cnapp-dev"
-alb_controller_namespace  = "azure-alb-system"
+alb_identity_name        = "id-alb-cnapp-dev"
+alb_controller_namespace = "azure-alb-system"

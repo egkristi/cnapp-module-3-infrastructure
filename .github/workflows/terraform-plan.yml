@@ -15,20 +15,24 @@ permissions:
 
 jobs:
   plan:
-    name: Terraform plan (${{ matrix.environment }})
-    strategy:
-      fail-fast: false
-      matrix:
-        environment:
-          - dev
-          - prod
-
+    name: Terraform plan (dev)
     uses: ./.github/workflows/terraform-plan-reusable.yml
     permissions:
       contents: read
       id-token: write
       pull-requests: read
     with:
-      environment: ${{ matrix.environment }}
+      environment: dev
       artifact_name: pr-tfplan
     secrets: inherit
+
+  scan:
+    name: Scan plan for misconfigs
+    needs: plan
+    uses: ./.github/workflows/iac-scan.yml
+    with:
+      artifact_name: ${{ needs.plan.outputs.artifact_name }}
+      environment: dev
+
+
+
