@@ -82,9 +82,12 @@ jobs:
       - name: Show Terraform plan
         run: terraform show -no-color tfplan
 
+      - name: Show Terraform plan
+        run: terraform show -json -no-color tfplan | jq > tfplan.json
+
       - name: Upload Terraform plan
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.plan_artifact.outputs.artifact_name }}
-          path: environments/${{ inputs.environment }}/tfplan
+          path: environments/${{ inputs.environment }}/tfplan.json
           retention-days: 1

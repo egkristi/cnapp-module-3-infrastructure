@@ -2,10 +2,6 @@ name: Terraform plan
 
 on:
   pull_request:
-    paths:
-      - "**/*.tf"
-      - "**/*.tfvars"
-      - ".github/workflows/*.yml"
   workflow_dispatch:
 
 permissions:

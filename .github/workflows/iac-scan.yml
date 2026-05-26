@@ -12,14 +12,12 @@ on:
         required: true
         type: string
 
-    outputs:
-      artifact_name:
-        description: "IaC scanning results"
-        value: ${{ jobs.plan.outputs.artifact_name }}
-
 
 jobs:
   trivy:
+    defaults:
+      run:
+        working-directory: environments/${{ inputs.environment }}
     runs-on: ubuntu-22.04
     container:
       image: aquasec/trivy:0.70.0
@@ -33,23 +31,95 @@ jobs:
           path: environments/${{ inputs.environment }}
 
       - name: Run Trivy
-        run: trivy config --format sarif -o trivy_results.sarif environments/${{ inputs.environment }}/${{ inputs.tfplan }}
+        run: trivy config --format sarif -o trivy_results.sarif tfplan.json
 
       - name: Upload Trivy SARIF artifact
         uses: actions/upload-artifact@v4
         with:
           name: trivy-results
-          path: trivy_results.sarif
+          path: environments/${{ inputs.environment }}/trivy_results.sarif
 
       - name: Upload Trivy SARIF to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: trivy_results.sarif
+          sarif_file: environments/${{ inputs.environment }}/trivy_results.sarif
           category: trivy
+
+  checkov:
+    defaults:
+      run:
+        working-directory: environments/${{ inputs.environment }}
+    runs-on: ubuntu-22.04
+    container:
+      image: bridgecrew/checkov@sha256:f4c7c5bde21df03432ca8d9d1305ffe21b7205ea752c3d4e65559abae67ead4a
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Terraform plan
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: environments/${{ inputs.environment }}
+
+      - name: debug
+        run: |
+          ls
+
+      - name: Run Checkov on Terraform plan
+        working-directory: environments/${{ inputs.environment }}
+        run: |
+          checkov \
+            -f tfplan.json \
+            --repo-root-for-plan-enrichment . \
+            --deep-analysis \
+            -o sarif \
+            --output-file-path checkov-plan.sarif \
+            --soft-fail
+
+      - name: Run Checkov on Terraform files
+        working-directory: environments/${{ inputs.environment }}
+        run: |
+          checkov \
+            -d . \
+            --skip-path tfplan.json \
+            -o sarif \
+            --output-file-path checkov-terraform.sarif \
+            --soft-fail
+
+      - name: debug
+        run: |
+          ls
+          ls checkov-plan.sarif
+          ls checkov-terraform.sarif
+
+      - name: Upload Checkov plan SARIF
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-plan-results
+          path: environments/${{ inputs.environment }}/checkov-plan.sarif
+
+      - name: Upload Checkov SARIF
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-terraform-results
+          path: environments/${{ inputs.environment }}/checkov-terraform.sarif
+
+      - name: Upload Checkov plan SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: environments/${{ inputs.environment }}/checkov-plan.sarif
+          category: checkov-plan
+
+      - name: Upload Checkov Terraform SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: environments/${{ inputs.environment }}/checkov-terraform.sarif
+          category: checkov-terraform
+
 
   opa:
     if: false # Remove this to enable Policy as Code (PaC) with Open Policy Agent
-    needs: [ trivy ]
+    needs: [ trivy, checkov ]
     runs-on: ubuntu-22.04
     container:
       image: openpolicyagent/conftest:v0.59.0
