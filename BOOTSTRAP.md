@@ -1,25 +1,5 @@
 # Bootstrap guide
 
-This repository assumes one Azure subscription, one GitHub Actions managed identity, separate GitHub Environments, and separate Terraform state files for `dev` and `prod`.
-
-## Target architecture
-
-```text
-Single Azure subscription
-├── rg-tfstate
-│   └── storage account
-│       └── tfstate container
-│           ├── dev.terraform.tfstate
-│           └── prod.terraform.tfstate
-├── rg-github-oidc
-│   └── id-github-terraform
-│       ├── federated credential for GitHub environment dev
-│       └── federated credential for GitHub environment prod
-└── workload resource groups
-    ├── rg-myproject-dev
-    └── rg-myproject-prod
-```
-
 ## 1. Open the repo in Codespaces or a Dev Container
 
 The devcontainer installs:
@@ -50,17 +30,19 @@ cp bootstrap/github-oidc/terraform.tfvars.example bootstrap/github-oidc/terrafor
 Edit `bootstrap/github-oidc/terraform.tfvars`:
 
 ```hcl
-subscription_id     = "<azure-subscription-id>"
-tenant_id           = "<azure-tenant-id>"
-location            = "westeurope"
-github_organization = "<github-org-or-user>"
-github_repository   = "<repo-name>"
-
-# Optional. Leave null to generate a globally unique name.
-state_storage_account_name = null
-
-identity_name = "id-github-terraform"
+subscription_id     = "468514d9-f054-4201-8f24-55d61d90872f"
+tenant_id           = "ee1a7779-f164-43b7-a09a-e9343e8e9d91"
+location            = "norwayeast"
+github_organization = "msilabben"
+github_repository   = "cnapp-module-3-infrastructure-<TODO>"
 github_environments = ["dev", "prod"]
+
+identity_resource_group_name = "rg-github-oidc-<TODO>"
+identity_name                = "id-github-terraform-<TODO>"
+
+state_resource_group_name  = "rg-tfstate-<TODO>"
+state_storage_account_name = "st-tfstate-<TODO>"
+state_container_name       = "tfstate-<TODO>"
 ```
 
 ## 4. Run the bootstrap Terraform
@@ -99,8 +81,8 @@ Example:
 ```hcl
 terraform {
   backend "azurerm" {
-    resource_group_name  = "rg-tfstate"
-    storage_account_name = "sttfstateabc12345"
+    resource_group_name  = "rg-tfstate-<TODO>"
+    storage_account_name = "st-tfstate"
     container_name       = "tfstate"
     key                  = "dev.terraform.tfstate"
     use_oidc             = true
@@ -166,10 +148,3 @@ On pull requests, `.github/workflows/terraform-plan.yml` runs plans for `dev` an
 On push to `main`, `.github/workflows/terraform-apply.yml` applies `dev`.
 
 For `prod`, run the `Terraform apply` workflow manually and select `prod`. The GitHub `prod` Environment should require approval.
-
-## Notes
-
-- Keep `dev` and `prod` in separate Terraform state files.
-- The same managed identity is used for both environments.
-- Production safety is enforced through GitHub Environment protection.
-- For stricter isolation later, split the single identity into separate `dev` and `prod` identities.

@@ -41,11 +41,7 @@ jobs:
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
-      TF_VAR_resource_group_name: ${{ vars.RESOURCE_GROUP_NAME }}
-      TF_VAR_location: ${{ vars.LOCATION }}
       TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
-      TF_VAR_key_vault_name: ${{ vars.KEY_VAULT_NAME }}
 
     steps:
       - name: Checkout
