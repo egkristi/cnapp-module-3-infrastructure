@@ -60,3 +60,22 @@ variable "temporary_node_pool_name" {
   type        = string
   default     = "tmpagentpool"
 }
+
+
+variable "default_node_pool_max_surge" {
+  description = "Maximum surge for AKS default node pool upgrades."
+  type        = string
+  default     = "10%"
+}
+
+variable "default_node_pool_drain_timeout_in_minutes" {
+  description = "Drain timeout for AKS default node pool upgrades."
+  type        = number
+  default     = 0
+}
+
+variable "default_node_pool_node_soak_duration_in_minutes" {
+  description = "Node soak duration for AKS default node pool upgrades."
+  type        = number
+  default     = 0
+}

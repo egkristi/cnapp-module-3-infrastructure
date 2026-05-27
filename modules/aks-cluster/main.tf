@@ -19,6 +19,18 @@ resource "azurerm_kubernetes_cluster" "this" {
     vm_size                     = var.vm_size
     vnet_subnet_id              = var.subnet_id
     temporary_name_for_rotation = var.temporary_node_pool_name
+
+    upgrade_settings {
+      max_surge                     = var.default_node_pool_max_surge
+      drain_timeout_in_minutes      = var.default_node_pool_drain_timeout_in_minutes
+      node_soak_duration_in_minutes = var.default_node_pool_node_soak_duration_in_minutes
+    }
+
+  }
+  lifecycle {
+    ignore_changes = [
+      microsoft_defender
+    ]
   }
 
   network_profile {
