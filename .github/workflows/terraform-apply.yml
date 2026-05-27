@@ -130,7 +130,7 @@ jobs:
           path: environments/prod
 
       - name: Show approved Terraform plan
-        run: terraform show -no-color tfplan
+        run: terraform show -no-color tfplan.json
 
       - name: Terraform apply approved plan
-        run: terraform apply -input=false tfplan
+        run: terraform apply -input=false tfplan.json
