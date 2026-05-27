@@ -27,4 +27,10 @@ resource "azurerm_subnet" "agfc" {
       name = "Microsoft.ServiceNetworking/trafficControllers"
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      delegation
+    ]
+  }
 }
