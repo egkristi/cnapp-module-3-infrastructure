@@ -89,5 +89,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.plan_artifact.outputs.artifact_name }}
-          path: environments/${{ inputs.environment }}/tfplan.json
+          path: |
+            environments/${{ inputs.environment }}/tfplan
+            environments/${{ inputs.environment }}/tfplan.json
           retention-days: 1
