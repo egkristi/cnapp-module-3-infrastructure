@@ -43,15 +43,15 @@ subscription_id     = "468514d9-f054-4201-8f24-55d61d90872f"
 tenant_id           = "ee1a7779-f164-43b7-a09a-e9343e8e9d91"
 location            = "norwayeast"
 github_organization = "msilabben"
-github_repository   = "cnapp-module-3-infrastructure"
+github_repository   = "cnapp-module-3-infrastructure-<TODO>"
 github_environments = ["dev", "prod"]
 
-identity_resource_group_name = "rg-github-oidc"
-identity_name                = "id-github-terraform"
+identity_resource_group_name = "rg-github-oidc-<TODO>"
+identity_name                = "id-github-terraform-<TODO>"
 
-state_resource_group_name  = "rg-tfstate"
-state_storage_account_name = "sttfstatecnappinfra001"
-state_container_name       = "tfstate"
+state_resource_group_name  = "rg-tfstate-<TODO>"
+state_storage_account_name = "st-tfstate-<TODO>"
+state_container_name       = "tfstate-<TODO>"
 ```
 
 ## 4. Run the bootstrap Terraform
@@ -74,8 +74,6 @@ terraform output
 You need these output values:
 
 - `azure_client_id`
-- `azure_tenant_id`
-- `azure_subscription_id`
 - `state_storage_account_name`
 
 ## 5. Update the backend files
@@ -90,9 +88,9 @@ Example:
 ```hcl
 terraform {
   backend "azurerm" {
-    resource_group_name  = "rg-tfstate"
-    storage_account_name = "sttfstateabc12345"
-    container_name       = "tfstate"
+    resource_group_name  = "rg-tfstate-<TODO>"
+    storage_account_name = "st-tfstate-<TODO>"
+    container_name       = "tfstate-<TODO>"
     key                  = "dev.terraform.tfstate"
     use_oidc             = true
     use_azuread_auth     = true
@@ -101,3 +99,57 @@ terraform {
 ```
 
 For local development, Terraform can still use your Azure CLI login. In GitHub Actions, the backend uses OIDC through the workflow environment variables.
+
+## 6. Create GitHub Environments
+
+In GitHub, create two Environments:
+
+- `dev`
+- `prod`
+
+For `prod`, configure required reviewers before deployments are allowed.
+
+## 7. Add GitHub Environment variables
+
+Add the `azure_client_id` to your GitHub repository "Repositroy Variables":
+
+Go to Settings > Secrets and Variables > actions > Variables > New repository variable
+
+```text
+AZURE_CLIENT_ID       = <bootstrap output azure_client_id>
+```
+
+## 8. Configure local tfvars
+
+```bash
+cd ../..
+cp environments/dev/terraform.tfvars.example environments/dev/terraform.tfvars
+cp environments/prod/terraform.tfvars.example environments/prod/terraform.tfvars
+```
+
+Edit both files and set your actual subscription ID and resource group names.
+
+## 9. Initialize and test locally
+
+```bash
+./scripts/tf.sh fmt
+./scripts/tf.sh init dev
+./scripts/tf.sh validate dev
+./scripts/tf.sh plan dev
+```
+
+Prod:
+
+```bash
+./scripts/tf.sh init prod
+./scripts/tf.sh validate prod
+./scripts/tf.sh plan prod
+```
+
+## 10. Push to GitHub
+
+On pull requests, `.github/workflows/terraform-plan.yml` runs plans for `dev` and `prod`.
+
+On push to `main`, `.github/workflows/terraform-apply.yml` applies `dev`.
+
+For `prod`, run the `Terraform apply` workflow manually and select `prod`. The GitHub `prod` Environment should require approval.
