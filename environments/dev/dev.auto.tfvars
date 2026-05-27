@@ -39,3 +39,8 @@ agfc_association_name = "assoc-cnapp-dev"
 // Application Gateway for Containers identities
 alb_identity_name        = "id-alb-cnapp-dev"
 alb_controller_namespace = "azure-alb-system"
+
+github_organization = "msilabben"
+github_repository = "cnapp-module-2-application"
+github_environments = ["dev", "prod"]
+identity_name = "id-cnapp-application"
