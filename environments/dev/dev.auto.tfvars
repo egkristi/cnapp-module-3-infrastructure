@@ -1,5 +1,5 @@
 // General
-location = "norwayeast"
+location            = "norwayeast"
 resource_group_name = "rg-cnapp-dev"
 
 // Key vault
