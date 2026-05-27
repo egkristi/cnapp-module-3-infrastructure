@@ -46,9 +46,9 @@ resource "azurerm_user_assigned_identity" "alb_controller" {
 }
 
 resource "azurerm_federated_identity_credential" "alb_controller" {
-  name                = "aksfic"
-  resource_group_name = var.resource_group_name
-  parent_id           = azurerm_user_assigned_identity.alb_controller.id
+  name = "aksfic"
+
+  user_assigned_identity_id = azurerm_user_assigned_identity.alb_controller.id
 
   issuer   = var.aks_oidc_issuer_url
   subject  = "system:serviceaccount:${var.alb_controller_namespace}:${var.alb_controller_service_account_name}"
