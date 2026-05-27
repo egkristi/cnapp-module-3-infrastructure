@@ -19,10 +19,6 @@ module "federated_id_for_deployment" {
   github_organization = var.github_organization
 
   role_definition_name = var.role_definition_name
-
-  tags = merge(var.tags, {
-    service = "federated-id-for-deployment
-  })
 }
 
 module "key_vault" {

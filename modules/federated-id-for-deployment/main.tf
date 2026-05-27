@@ -1,3 +1,5 @@
+data "azurerm_subscription" "current" {}
+
 resource "azurerm_user_assigned_identity" "github_actions" {
   name                = var.name
   location            = var.location

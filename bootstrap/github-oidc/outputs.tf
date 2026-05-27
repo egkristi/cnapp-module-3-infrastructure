@@ -8,16 +8,6 @@ output "github_actions_principal_id" {
   value       = azurerm_user_assigned_identity.github_actions.principal_id
 }
 
-output "azure_tenant_id" {
-  description = "Set this as GitHub Environment variable AZURE_TENANT_ID."
-  value       = var.tenant_id
-}
-
-output "azure_subscription_id" {
-  description = "Set this as GitHub Environment variable AZURE_SUBSCRIPTION_ID."
-  value       = var.subscription_id
-}
-
 output "state_resource_group_name" {
   description = "Remote state resource group name."
   value       = azurerm_resource_group.state.name

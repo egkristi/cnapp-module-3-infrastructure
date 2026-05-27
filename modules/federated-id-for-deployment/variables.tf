@@ -20,13 +20,13 @@ variable "github_environments" {
   default     = ["dev", "prod"]
 }
 
-variable "identity_resource_group_name" {
+variable "resource_group_name" {
   description = "Resource group for the GitHub Actions managed identity."
   type        = string
   default     = "rg-github-oidc"
 }
 
-variable "identity_name" {
+variable "name" {
   description = "Single user-assigned managed identity used by GitHub Actions."
   type        = string
   default     = "id-github-terraform"
