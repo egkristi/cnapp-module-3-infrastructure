@@ -6,6 +6,25 @@ module "resource_group" {
   tags     = var.tags
 }
 
+
+module "federated_id_for_deployment" {
+  source = "../../modules/federated-id-for-deployment"
+
+  name = var.identity_name
+  location = var.location
+  resource_group_name = var.resource_group_name
+
+  github_environments = var.github_environments
+  github_repository = var.github_repository
+  github_organization = var.github_organization
+
+  role_definition_name = var.role_definition_name
+
+  tags = merge(var.tags, {
+    service = "federated-id-for-deployment
+  })
+}
+
 module "key_vault" {
   source = "../../modules/key-vault"
 

@@ -132,3 +132,31 @@ variable "alb_controller_namespace" {
   type        = string
   default     = "azure-alb-system"
 }
+
+variable "github_organization" {
+  description = "GitHub organization or user that owns the repository."
+  type        = string
+}
+
+variable "github_repository" {
+  description = "GitHub repository name."
+  type        = string
+}
+
+variable "github_environments" {
+  description = "GitHub environments trusted by the managed identity."
+  type        = set(string)
+  default     = ["dev", "prod"]
+}
+
+variable "identity_name" {
+  description = "Single user-assigned managed identity used by GitHub Actions."
+  type        = string
+  default     = "id-cnapp-application"
+}
+
+variable "role_definition_name" {
+  description = "Azure RBAC role assigned to the managed identity. Narrow the scope/role for stricter setups."
+  type        = string
+  default     = "Contributor"
+}
