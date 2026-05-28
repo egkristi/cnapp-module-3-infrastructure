@@ -128,5 +128,5 @@ resource "azurerm_role_assignment" "aks_new_acr_pull" {
 resource "azurerm_role_assignment" "deployment_key_vault_secrets_user" {
   scope                = module.key_vault.id
   role_definition_name = "Key Vault Secrets User"
-  principal_id         = module.federated_id_for_deployment.principal_id
+  principal_id         = module.federated_id_for_deployment.github_actions_principal_id
 }
