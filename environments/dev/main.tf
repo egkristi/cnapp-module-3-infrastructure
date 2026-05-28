@@ -121,17 +121,6 @@ resource "azurerm_role_assignment" "aks_existing_acr_pull" {
   principal_id         = module.aks_cluster.kubelet_identity_object_id
 }
 
-module "shared_services_resource_group" {
-  source = "../../modules/resource-group"
-
-  name     = "rg-shared-services"
-  location = var.location
-
-  tags = merge(var.tags, {
-    service = "shared-services"
-  })
-}
-
 module "container_registry" {
   source = "../../modules/container-registry"
 
