@@ -6,12 +6,6 @@ data "azurerm_resource_group" "environment_aks" {
   name = "rg-${var.name_prefix}-dev-aks"
 }
 
-
-data "azurerm_kubernetes_cluster" "environment" {
-  name                = "aks-${var.name_prefix}-dev"
-  resource_group_name = data.azurerm_resource_group.environment_aks.name
-}
-
 resource "azurerm_user_assigned_identity" "github_actions" {
   name                = var.name
   location            = var.location
@@ -45,8 +39,4 @@ resource "azurerm_role_assignment" "terraform_resource_group" {
   principal_id         = azurerm_user_assigned_identity.github_actions.principal_id
 }
 
-resource "azurerm_role_assignment" "aks_cluster_user" {
-  scope                = data.azurerm_kubernetes_cluster.environment.id
-  role_definition_name = "Azure Kubernetes Service Cluster User Role"
-  principal_id         = azurerm_user_assigned_identity.github_actions.principal_id
-}
+

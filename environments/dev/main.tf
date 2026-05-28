@@ -130,3 +130,9 @@ resource "azurerm_role_assignment" "deployment_key_vault_secrets_user" {
   role_definition_name = "Key Vault Secrets User"
   principal_id         = module.federated_id_for_deployment.github_actions_principal_id
 }
+
+resource "azurerm_role_assignment" "deployment_aks_cluster_user" {
+  scope                = module.aks_cluster.id
+  role_definition_name = "Azure Kubernetes Service Cluster User Role"
+  principal_id         = module.federated_id_for_deployment.github_actions_principal_id
+}
