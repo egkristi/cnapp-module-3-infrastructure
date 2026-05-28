@@ -1,44 +1,101 @@
-output "azure_client_id" {
-  description = "Set this as GitHub Environment variable AZURE_CLIENT_ID."
-  value       = azurerm_user_assigned_identity.github_actions.client_id
+output "name_prefix" {
+  description = "Common name prefix used for this infrastructure instance."
+  value       = var.name_prefix
 }
 
-output "github_actions_principal_id" {
-  description = "Principal ID / object ID of the GitHub Actions user-assigned managed identity."
-  value       = azurerm_user_assigned_identity.github_actions.principal_id
+output "location" {
+  description = "Azure region used by the bootstrap resources."
+  value       = var.location
+}
+
+output "tenant_id" {
+  description = "Azure tenant ID."
+  value       = data.azurerm_client_config.current.tenant_id
+}
+
+output "subscription_id" {
+  description = "Azure subscription ID."
+  value       = data.azurerm_subscription.current.subscription_id
+}
+
+output "identity_resource_group_name" {
+  description = "Resource group containing GitHub Actions managed identities."
+  value       = azurerm_resource_group.identity.name
 }
 
 output "state_resource_group_name" {
-  description = "Remote state resource group name."
+  description = "Resource group containing Terraform state storage."
   value       = azurerm_resource_group.state.name
 }
 
 output "state_storage_account_name" {
-  description = "Remote state storage account name."
+  description = "Storage account used for Terraform state."
   value       = azurerm_storage_account.state.name
 }
 
-output "state_container_name" {
-  description = "Remote state storage container name."
-  value       = azurerm_storage_container.state.name
-}
-
-output "backend_config_dev" {
-  description = "Backend block values for environments/dev/backend.tf."
+output "state_containers" {
+  description = "Terraform state containers per environment."
   value = {
-    resource_group_name  = azurerm_resource_group.state.name
-    storage_account_name = azurerm_storage_account.state.name
-    container_name       = azurerm_storage_container.state.name
-    key                  = "dev.terraform.tfstate"
+    for env, container in azurerm_storage_container.state : env => container.name
   }
 }
 
-output "backend_config_prod" {
-  description = "Backend block values for environments/prod/backend.tf."
+output "environment_resource_groups" {
+  description = "Environment resource groups per environment."
   value = {
-    resource_group_name  = azurerm_resource_group.state.name
-    storage_account_name = azurerm_storage_account.state.name
-    container_name       = azurerm_storage_container.state.name
-    key                  = "prod.terraform.tfstate"
+    for env, rg in azurerm_resource_group.environment : env => rg.name
+  }
+}
+
+output "plan_identities" {
+  description = "Read-only GitHub Actions plan managed identity details per environment."
+  value = {
+    for env, identity in azurerm_user_assigned_identity.plan : env => {
+      name         = identity.name
+      client_id    = identity.client_id
+      principal_id = identity.principal_id
+      resource_id  = identity.id
+    }
+  }
+}
+
+output "apply_identities" {
+  description = "Write-capable GitHub Actions apply managed identity details per environment."
+  value = {
+    for env, identity in azurerm_user_assigned_identity.apply : env => {
+      name         = identity.name
+      client_id    = identity.client_id
+      principal_id = identity.principal_id
+      resource_id  = identity.id
+    }
+  }
+}
+
+output "github_environment_variable_reference" {
+  description = "Values to copy into GitHub repository or environment variables."
+  value = {
+    repository_variables = {
+      AZURE_TENANT_ID       = data.azurerm_client_config.current.tenant_id
+      AZURE_SUBSCRIPTION_ID = data.azurerm_subscription.current.subscription_id
+      LOCATION              = var.location
+      TF_STATE_RESOURCE_GROUP  = azurerm_resource_group.state.name
+      TF_STATE_STORAGE_ACCOUNT = azurerm_storage_account.state.name
+    }
+
+    dev_environment_variables = {
+      AZURE_CLIENT_ID    = azurerm_user_assigned_identity.apply["dev"].client_id
+      RESOURCE_GROUP_NAME = azurerm_resource_group.environment["dev"].name
+      TF_STATE_CONTAINER  = azurerm_storage_container.state["dev"].name
+    }
+
+    prod_environment_variables = {
+      AZURE_CLIENT_ID    = azurerm_user_assigned_identity.apply["prod"].client_id
+      RESOURCE_GROUP_NAME = azurerm_resource_group.environment["prod"].name
+      TF_STATE_CONTAINER  = azurerm_storage_container.state["prod"].name
+    }
+
+    pr_plan_repository_variables = {
+      DEV_PLAN_AZURE_CLIENT_ID = azurerm_user_assigned_identity.plan["dev"].client_id
+    }
   }
 }
