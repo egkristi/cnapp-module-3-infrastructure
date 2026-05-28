@@ -124,3 +124,9 @@ resource "azurerm_role_assignment" "aks_new_acr_pull" {
   role_definition_name = "AcrPull"
   principal_id         = module.aks_cluster.kubelet_identity_object_id
 }
+
+resource "azurerm_role_assignment" "deployment_key_vault_secrets_user" {
+  scope                = module.key_vault.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = module.federated_id_for_deployment.principal_id
+}

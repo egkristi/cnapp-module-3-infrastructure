@@ -6,10 +6,6 @@ data "azurerm_resource_group" "environment_aks" {
   name = "rg-${var.name_prefix}-dev-aks"
 }
 
-data "azurerm_key_vault" "environment" {
-  name                = "kv-${var.name_prefix}-dev"
-  resource_group_name = data.azurerm_resource_group.environment.name
-}
 
 data "azurerm_kubernetes_cluster" "environment" {
   name                = "aks-${var.name_prefix}-dev"
@@ -46,12 +42,6 @@ resource "azurerm_role_assignment" "terraform_resource_group" {
 
   scope                = each.value
   role_definition_name = var.role_definition_name
-  principal_id         = azurerm_user_assigned_identity.github_actions.principal_id
-}
-
-resource "azurerm_role_assignment" "key_vault_secrets_user" {
-  scope                = data.azurerm_key_vault.environment.id
-  role_definition_name = "Key Vault Secrets User"
   principal_id         = azurerm_user_assigned_identity.github_actions.principal_id
 }
 
