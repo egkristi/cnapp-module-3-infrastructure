@@ -79,3 +79,8 @@ variable "default_node_pool_node_soak_duration_in_minutes" {
   type        = number
   default     = 0
 }
+
+variable "node_resource_group_name" {
+  description = "Name of the AKS managed node resource group."
+  type        = string
+}

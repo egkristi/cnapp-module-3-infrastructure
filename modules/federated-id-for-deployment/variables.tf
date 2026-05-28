@@ -37,3 +37,9 @@ variable "role_definition_name" {
   type        = string
   default     = "Contributor"
 }
+
+variable "name_prefix" {
+  description = "Prefix used for resource creation"
+  type        = string
+  default     = "id-github-terraform"
+}

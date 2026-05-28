@@ -6,6 +6,10 @@ data "azurerm_resource_group" "environment_aks" {
   name = "rg-${var.name_prefix}-dev-aks"
 }
 
+data "azurerm_resource_group" "environment_aks" {
+  name = "rg-${var.name_prefix}-dev-aks-nodes"
+}
+
 module "federated_id_for_deployment" {
   source = "../../modules/federated-id-for-deployment"
 
@@ -18,6 +22,7 @@ module "federated_id_for_deployment" {
   github_organization = var.github_organization
 
   role_definition_name = var.role_definition_name
+  name_prefix          = var.name_prefix
 }
 
 module "key_vault" {
@@ -61,10 +66,12 @@ module "network" {
 module "aks_cluster" {
   source = "../../modules/aks-cluster"
 
-  name                = "aks-${var.name_prefix}-dev"
-  location            = var.location
-  resource_group_name = data.azurerm_resource_group.environment_aks.name
-  dns_prefix          = "aks-${var.name_prefix}-dev"
+  name                     = "aks-${var.name_prefix}-dev"
+  location                 = var.location
+  resource_group_name      = data.azurerm_resource_group.environment_aks.name
+  node_resource_group_name = data.azurerm_resource_group.environment_aks_nodes.name
+
+  dns_prefix = "aks-${var.name_prefix}-dev"
 
   subnet_id = module.network.aks_subnet_id
 
