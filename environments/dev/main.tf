@@ -10,12 +10,12 @@ module "resource_group" {
 module "federated_id_for_deployment" {
   source = "../../modules/federated-id-for-deployment"
 
-  name = var.identity_name
-  location = var.location
+  name                = var.identity_name
+  location            = var.location
   resource_group_name = var.resource_group_name
 
   github_environments = var.github_environments
-  github_repository = var.github_repository
+  github_repository   = var.github_repository
   github_organization = var.github_organization
 
   role_definition_name = var.role_definition_name

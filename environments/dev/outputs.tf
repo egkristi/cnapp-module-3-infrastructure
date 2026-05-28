@@ -32,3 +32,8 @@ output "alb_identity_principal_id" {
   description = "Principal ID of the ALB Controller managed identity."
   value       = module.app_gateway_for_containers.alb_identity_principal_id
 }
+
+output "azure_client_id" {
+  description = "Set this as GitHub Environment variable AZURE_CLIENT_ID."
+  value       = azurerm_user_assigned_identity.github_actions.client_id
+}
