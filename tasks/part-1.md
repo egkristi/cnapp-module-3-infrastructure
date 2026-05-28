@@ -1,3 +1,19 @@
+# Part 0: Account creationg
+
+You will be given a user on the format:
+username: cnappuser<number>@mnelab.onmicrosoft.com
+password: mnemonicCNAPPlabb<number>
+
+## Login
+Make sure to have the Microsoft Authenticator app installed.
+
+Go to portal.azure.com and sign in to your account.
+You will be asked to both change password and setup the authenticator app
+Follow the steps provided. 
+When you have signed into the account, search for "Subscriptions". 
+You should now be able to the see subscription "Sandbox"
+
+
 # Part 1: Setup
 
 In this part we will be preparing our azure environment for use with terraform.
