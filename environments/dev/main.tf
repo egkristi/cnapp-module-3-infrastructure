@@ -6,16 +6,27 @@ module "resource_group" {
   tags     = var.tags
 }
 
+module "shared_services_resource_group" {
+  source = "../../modules/resource-group"
+
+  name     = "rg-shared-services"
+  location = var.location
+
+  tags = merge(var.tags, {
+    service = "shared-services"
+  })
+}
+
 
 module "federated_id_for_deployment" {
   source = "../../modules/federated-id-for-deployment"
 
-  name = var.identity_name
-  location = var.location
+  name                = var.identity_name
+  location            = var.location
   resource_group_name = var.resource_group_name
 
   github_environments = var.github_environments
-  github_repository = var.github_repository
+  github_repository   = var.github_repository
   github_organization = var.github_organization
 
   role_definition_name = var.role_definition_name
@@ -104,8 +115,39 @@ data "azurerm_container_registry" "existing" {
   resource_group_name = var.acr_resource_group_name
 }
 
-resource "azurerm_role_assignment" "aks_acr_pull" {
+resource "azurerm_role_assignment" "aks_existing_acr_pull" {
   scope                = data.azurerm_container_registry.existing.id
+  role_definition_name = "AcrPull"
+  principal_id         = module.aks_cluster.kubelet_identity_object_id
+}
+
+module "shared_services_resource_group" {
+  source = "../../modules/resource-group"
+
+  name     = "rg-shared-services"
+  location = var.location
+
+  tags = merge(var.tags, {
+    service = "shared-services"
+  })
+}
+
+module "container_registry" {
+  source = "../../modules/container-registry"
+
+  name_prefix         = var.acr_name_prefix
+  resource_group_name = module.shared_services_resource_group.name
+  location            = var.location
+  sku                 = var.acr_sku
+  acr_admin_enabled   = var.acr_admin_enabled
+
+  tags = merge(var.tags, {
+    service = "container-registry"
+  })
+}
+
+resource "azurerm_role_assignment" "aks_new_acr_pull" {
+  scope                = module.container_registry.id
   role_definition_name = "AcrPull"
   principal_id         = module.aks_cluster.kubelet_identity_object_id
 }

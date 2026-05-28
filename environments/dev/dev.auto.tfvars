@@ -17,9 +17,18 @@ aks_dns_prefix   = "aks-cnapp-dev"
 aks_node_count = 2
 aks_vm_size    = "Standard_D2s_v3"
 
-// Use existing Azure Container Registry
+
+# Existing ACR
+# This is the old/current ACR that Terraform should only read, not manage.
 acr_name                = "markusscnapplab"
 acr_resource_group_name = "markuss-cnapplab"
+
+# New ACR
+# Must be lowercase alphanumeric only. No hyphens.
+# The module will create something like cnappdevabcdeacr.
+acr_name_prefix   = "cnappdev"
+acr_sku           = "Standard"
+acr_admin_enabled = false
 
 // Network variables
 vnet_name          = "vnet-cnapp-dev"
@@ -41,6 +50,6 @@ alb_identity_name        = "id-alb-cnapp-dev"
 alb_controller_namespace = "azure-alb-system"
 
 github_organization = "msilabben"
-github_repository = "cnapp-module-2-application"
+github_repository   = "cnapp-module-2-application"
 github_environments = ["dev", "prod"]
-identity_name = "id-cnapp-application"
+identity_name       = "id-cnapp-application"

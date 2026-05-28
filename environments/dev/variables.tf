@@ -77,6 +77,29 @@ variable "acr_resource_group_name" {
   type        = string
 }
 
+variable "acr_sku" {
+  type        = string
+  description = "SKU for the Azure Container Registry."
+  default     = "Standard"
+
+  validation {
+    condition     = contains(["Basic", "Standard", "Premium"], var.acr_sku)
+    error_message = "The acr_sku value must be Basic, Standard, or Premium."
+  }
+}
+
+variable "acr_name_prefix" {
+  type        = string
+  description = "Prefix used for the new Azure Container Registry name. Must contain only lowercase letters and numbers."
+}
+
+variable "acr_admin_enabled" {
+  type        = bool
+  description = "Whether the Azure Container Registry admin user is enabled."
+  default     = false
+}
+
+
 variable "vnet_name" {
   description = "Name of the virtual network."
   type        = string
@@ -160,3 +183,4 @@ variable "role_definition_name" {
   type        = string
   default     = "Contributor"
 }
+

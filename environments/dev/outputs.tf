@@ -3,6 +3,21 @@ output "resource_group_name" {
   value       = module.resource_group.name
 }
 
+output "acr_name" {
+  description = "Name of the Azure Container Registry."
+  value       = module.container_registry.name
+}
+
+output "acr_id" {
+  description = "ID of the Azure Container Registry."
+  value       = module.container_registry.id
+}
+
+output "acr_login_server" {
+  description = "Login server URL of the Azure Container Registry."
+  value       = module.container_registry.login_server
+}
+
 output "key_vault_name" {
   description = "Key Vault name."
   value       = module.key_vault.name
