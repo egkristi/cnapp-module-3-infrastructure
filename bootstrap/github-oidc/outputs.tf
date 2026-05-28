@@ -75,27 +75,23 @@ output "github_environment_variable_reference" {
   description = "Values to copy into GitHub repository or environment variables."
   value = {
     repository_variables = {
-      AZURE_TENANT_ID       = data.azurerm_client_config.current.tenant_id
-      AZURE_SUBSCRIPTION_ID = data.azurerm_subscription.current.subscription_id
-      LOCATION              = var.location
+      AZURE_TENANT_ID          = data.azurerm_client_config.current.tenant_id
+      AZURE_SUBSCRIPTION_ID    = data.azurerm_subscription.current.subscription_id
+      LOCATION                 = var.location
       TF_STATE_RESOURCE_GROUP  = azurerm_resource_group.state.name
       TF_STATE_STORAGE_ACCOUNT = azurerm_storage_account.state.name
     }
 
     dev_environment_variables = {
-      AZURE_CLIENT_ID    = azurerm_user_assigned_identity.apply["dev"].client_id
-      RESOURCE_GROUP_NAME = azurerm_resource_group.environment["dev"].name
+      AZURE_CLIENT_ID     = azurerm_user_assigned_identity.apply["dev"].client_id
+      RESOURCE_GROUP_NAME = local.environment_resource_group_names["dev"]
       TF_STATE_CONTAINER  = azurerm_storage_container.state["dev"].name
     }
 
     prod_environment_variables = {
-      AZURE_CLIENT_ID    = azurerm_user_assigned_identity.apply["prod"].client_id
-      RESOURCE_GROUP_NAME = azurerm_resource_group.environment["prod"].name
+      AZURE_CLIENT_ID     = azurerm_user_assigned_identity.apply["prod"].client_id
+      RESOURCE_GROUP_NAME = local.environment_resource_group_names["prod"]
       TF_STATE_CONTAINER  = azurerm_storage_container.state["prod"].name
-    }
-
-    pr_plan_repository_variables = {
-      DEV_PLAN_AZURE_CLIENT_ID = azurerm_user_assigned_identity.plan["dev"].client_id
     }
   }
 }
