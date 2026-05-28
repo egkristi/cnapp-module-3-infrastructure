@@ -6,7 +6,7 @@ data "azurerm_resource_group" "environment_aks" {
   name = "rg-${var.name_prefix}-dev-aks"
 }
 
-data "azurerm_resource_group" "environment_aks" {
+data "azurerm_resource_group" "environment_aks_nodes" {
   name = "rg-${var.name_prefix}-dev-aks-nodes"
 }
 
