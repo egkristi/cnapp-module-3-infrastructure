@@ -37,7 +37,7 @@ module "key_vault" {
 
   name                = var.key_vault_name
   location            = var.location
-  resource_group_name = module.resource_group.name
+  resource_group_name = module.shared_services_resource_group.name
   tenant_id           = var.tenant_id
 
   administrator_principal_ids = var.key_vault_administrator_principal_ids
