@@ -30,6 +30,7 @@ resource "azurerm_role_assignment" "administrators" {
   scope                = azurerm_key_vault.this.id
   role_definition_name = "Key Vault Administrator"
   principal_id         = each.value
+  principal_type       = "ServicePrincipal"
 }
 
 resource "azurerm_role_assignment" "secrets_users" {
@@ -38,4 +39,5 @@ resource "azurerm_role_assignment" "secrets_users" {
   scope                = azurerm_key_vault.this.id
   role_definition_name = "Key Vault Secrets User"
   principal_id         = each.value
+  principal_type       = "ServicePrincipal"
 }

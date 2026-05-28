@@ -217,19 +217,11 @@ resource "azurerm_role_assignment" "plan_reader_aks_nodes" {
   principal_id         = azurerm_user_assigned_identity.plan[each.key].principal_id
 }
 
-resource "azurerm_role_assignment" "apply_contributor_aks_nodes" {
+resource "azurerm_role_assignment" "apply_owner_aks_nodes" {
   for_each = local.environments
 
   scope                = azurerm_resource_group.environment_aks_nodes[each.key].id
-  role_definition_name = "Contributor"
-  principal_id         = azurerm_user_assigned_identity.apply[each.key].principal_id
-}
-
-resource "azurerm_role_assignment" "apply_rbac_administrator_aks_nodes" {
-  for_each = local.environments
-
-  scope                = azurerm_resource_group.environment_aks_nodes[each.key].id
-  role_definition_name = "Role Based Access Control Administrator"
+  role_definition_name = "Owner"
   principal_id         = azurerm_user_assigned_identity.apply[each.key].principal_id
 }
 
