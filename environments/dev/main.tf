@@ -6,10 +6,6 @@ data "azurerm_resource_group" "environment_aks" {
   name = "rg-${var.name_prefix}-dev-aks"
 }
 
-data "azurerm_resource_group" "environment_aks_nodes" {
-  name = "rg-${var.name_prefix}-dev-aks-nodes"
-}
-
 module "federated_id_for_deployment" {
   source = "../../modules/federated-id-for-deployment"
 
@@ -69,7 +65,6 @@ module "aks_cluster" {
   name                     = "aks-${var.name_prefix}-dev"
   location                 = var.location
   resource_group_name      = data.azurerm_resource_group.environment_aks.name
-  node_resource_group_name = data.azurerm_resource_group.environment_aks_nodes.name
 
   dns_prefix = "aks-${var.name_prefix}-dev"
 

@@ -100,17 +100,6 @@ resource "azurerm_resource_group" "environment_aks" {
   })
 }
 
-resource "azurerm_resource_group" "environment_aks_nodes" {
-  for_each = local.environments
-
-  name     = local.aks_node_resource_group_names[each.key]
-  location = var.location
-
-  tags = merge(local.common_tags, {
-    environment = each.key
-    service     = "aks-nodes"
-  })
-}
 
 resource "azurerm_user_assigned_identity" "plan" {
   for_each = local.environments
@@ -207,22 +196,6 @@ resource "azurerm_role_assignment" "plan_reader_aks" {
   scope                = azurerm_resource_group.environment_aks[each.key].id
   role_definition_name = "Reader"
   principal_id         = azurerm_user_assigned_identity.plan[each.key].principal_id
-}
-
-resource "azurerm_role_assignment" "plan_reader_aks_nodes" {
-  for_each = local.environments
-
-  scope                = azurerm_resource_group.environment_aks_nodes[each.key].id
-  role_definition_name = "Reader"
-  principal_id         = azurerm_user_assigned_identity.plan[each.key].principal_id
-}
-
-resource "azurerm_role_assignment" "apply_owner_aks_nodes" {
-  for_each = local.environments
-
-  scope                = azurerm_resource_group.environment_aks_nodes[each.key].id
-  role_definition_name = "Owner"
-  principal_id         = azurerm_user_assigned_identity.apply[each.key].principal_id
 }
 
 resource "azurerm_role_assignment" "apply_contributor_aks" {
