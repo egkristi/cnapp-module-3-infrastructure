@@ -1,8 +1,3 @@
-output "resource_group_name" {
-  description = "Created resource group name."
-  value       = module.resource_group.name
-}
-
 output "acr_name" {
   description = "Name of the Azure Container Registry."
   value       = module.container_registry.name
@@ -51,11 +46,6 @@ output "alb_identity_principal_id" {
 output "azure_client_id" {
   description = "Set this as GitHub Environment variable AZURE_CLIENT_ID."
   value       = module.federated_id_for_deployment.azure_client_id
-}
-
-output "shared_services_resource_group_name" {
-  description = "Name of the shared services resource group."
-  value       = module.shared_services_resource_group.name
 }
 
 output "new_acr_name" {

@@ -1,12 +1,12 @@
-variable "resource_group_name" {
-  description = "Name of the resource group."
-  type        = string
-}
-
 variable "location" {
   description = "Azure region for resources."
   type        = string
   default     = "westeurope"
+}
+
+variable "name_prefix" {
+  description = "Prefix to be used for resource creation."
+  type        = string
 }
 
 variable "tags" {
@@ -22,11 +22,6 @@ variable "tenant_id" {
   type        = string
 }
 
-variable "key_vault_name" {
-  description = "Globally unique Key Vault name."
-  type        = string
-}
-
 variable "key_vault_administrator_principal_ids" {
   description = "Principal IDs that should administer the Key Vault."
   type        = list(string)
@@ -37,16 +32,6 @@ variable "key_vault_secrets_user_principal_ids" {
   description = "Principal IDs that should read secrets from the Key Vault."
   type        = list(string)
   default     = []
-}
-
-variable "aks_cluster_name" {
-  description = "Name of the AKS cluster."
-  type        = string
-}
-
-variable "aks_dns_prefix" {
-  description = "DNS prefix for the AKS cluster."
-  type        = string
 }
 
 variable "aks_kubernetes_version" {
@@ -78,22 +63,12 @@ variable "acr_sku" {
   }
 }
 
-variable "acr_name_prefix" {
-  type        = string
-  description = "Prefix used for the new Azure Container Registry name. Must contain only lowercase letters and numbers."
-}
-
 variable "acr_admin_enabled" {
   type        = bool
   description = "Whether the Azure Container Registry admin user is enabled."
   default     = false
 }
 
-
-variable "vnet_name" {
-  description = "Name of the virtual network."
-  type        = string
-}
 
 variable "vnet_address_space" {
   description = "Address space for the virtual network."
@@ -120,26 +95,6 @@ variable "agfc_subnet_address_prefixes" {
   type        = list(string)
 }
 
-variable "agfc_name" {
-  description = "Name of the Application Gateway for Containers resource."
-  type        = string
-}
-
-variable "agfc_frontend_name" {
-  description = "Name of the Application Gateway for Containers frontend."
-  type        = string
-}
-
-variable "agfc_association_name" {
-  description = "Name of the Application Gateway for Containers association."
-  type        = string
-}
-
-variable "alb_identity_name" {
-  description = "Name of the ALB Controller user-assigned managed identity."
-  type        = string
-}
-
 variable "alb_controller_namespace" {
   description = "Namespace where ALB Controller will be installed."
   type        = string
@@ -160,12 +115,6 @@ variable "github_environments" {
   description = "GitHub environments trusted by the managed identity."
   type        = set(string)
   default     = ["dev", "prod"]
-}
-
-variable "identity_name" {
-  description = "Single user-assigned managed identity used by GitHub Actions."
-  type        = string
-  default     = "id-cnapp-application"
 }
 
 variable "role_definition_name" {

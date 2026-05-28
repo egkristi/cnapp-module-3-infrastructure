@@ -1,29 +1,17 @@
-module "resource_group" {
-  source = "../../modules/resource-group"
-
-  name     = var.resource_group_name
-  location = var.location
-  tags     = var.tags
+data "azurerm_resource_group" "environment" {
+  name = "rg-${var.name_prefix}-dev"
 }
 
-module "shared_services_resource_group" {
-  source = "../../modules/resource-group"
-
-  name     = "rg-shared-services"
-  location = var.location
-
-  tags = merge(var.tags, {
-    service = "shared-services"
-  })
+data "azurerm_resource_group" "environment_aks" {
+  name = "rg-${var.name_prefix}-dev-aks"
 }
-
 
 module "federated_id_for_deployment" {
   source = "../../modules/federated-id-for-deployment"
 
-  name                = var.identity_name
+  name                = "id-${var.name_prefix}-application"
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = data.azurerm_resource_group.environment.name
 
   github_environments = var.github_environments
   github_repository   = var.github_repository
@@ -35,9 +23,9 @@ module "federated_id_for_deployment" {
 module "key_vault" {
   source = "../../modules/key-vault"
 
-  name                = var.key_vault_name
+  name                = "kv-${var.name_prefix}-dev"
   location            = var.location
-  resource_group_name = module.shared_services_resource_group.name
+  resource_group_name = data.azurerm_resource_group.environment.name
   tenant_id           = var.tenant_id
 
   administrator_principal_ids = var.key_vault_administrator_principal_ids
@@ -53,9 +41,9 @@ module "key_vault" {
 module "network" {
   source = "../../modules/network"
 
-  name                = var.vnet_name
+  name                = "vnet-${var.name_prefix}-dev"
   location            = var.location
-  resource_group_name = module.resource_group.name
+  resource_group_name = data.azurerm_resource_group.environment_aks.name
 
   address_space = var.vnet_address_space
 
@@ -73,10 +61,10 @@ module "network" {
 module "aks_cluster" {
   source = "../../modules/aks-cluster"
 
-  name                = var.aks_cluster_name
+  name                = "aks-${var.name_prefix}-dev"
   location            = var.location
-  resource_group_name = module.resource_group.name
-  dns_prefix          = var.aks_dns_prefix
+  resource_group_name = data.azurerm_resource_group.environment_aks.name
+  dns_prefix          = "aks-${var.name_prefix}-dev"
 
   subnet_id = module.network.aks_subnet_id
 
@@ -92,15 +80,15 @@ module "aks_cluster" {
 module "app_gateway_for_containers" {
   source = "../../modules/app-gw-for-containers"
 
-  name                = var.agfc_name
+  name                = "agfc-${var.name_prefix}-dev"
   location            = var.location
-  resource_group_name = module.resource_group.name
+  resource_group_name = data.azurerm_resource_group.environment_aks.name
 
-  frontend_name         = var.agfc_frontend_name
-  association_name      = var.agfc_association_name
+  frontend_name         = "frontend-${var.name_prefix}-dev"
+  association_name      = "assoc-${var.name_prefix}-dev"
   association_subnet_id = module.network.agfc_subnet_id
 
-  alb_identity_name            = var.alb_identity_name
+  alb_identity_name            = "id-alb-${var.name_prefix}-dev"
   aks_oidc_issuer_url          = module.aks_cluster.oidc_issuer_url
   aks_node_resource_group_name = module.aks_cluster.node_resource_group
   alb_controller_namespace     = var.alb_controller_namespace
@@ -113,8 +101,8 @@ module "app_gateway_for_containers" {
 module "container_registry" {
   source = "../../modules/container-registry"
 
-  name_prefix         = var.acr_name_prefix
-  resource_group_name = module.shared_services_resource_group.name
+  name_prefix         = "${var.name_prefix}dev"
+  resource_group_name = data.azurerm_resource_group.environment.name
   location            = var.location
   sku                 = var.acr_sku
   acr_admin_enabled   = var.acr_admin_enabled

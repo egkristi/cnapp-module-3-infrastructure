@@ -83,6 +83,18 @@ resource "azurerm_resource_group" "environment" {
   })
 }
 
+
+resource "azurerm_resource_group" "environment_aks" {
+  for_each = local.environments
+
+  name     = "${local.environment_resource_group_names[each.key]}-aks"
+  location = var.location
+
+  tags = merge(local.common_tags, {
+    environment = each.key
+  })
+}
+
 resource "azurerm_user_assigned_identity" "plan" {
   for_each = local.environments
 
@@ -147,7 +159,7 @@ resource "azurerm_federated_identity_credential" "apply_environment" {
   subject  = "repo:${var.github_organization}/${var.github_repository}:environment:${each.key}"
 }
 
-# Read-only Azure permissions for plan identities.
+
 resource "azurerm_role_assignment" "plan_reader" {
   for_each = local.environments
 
@@ -156,15 +168,6 @@ resource "azurerm_role_assignment" "plan_reader" {
   principal_id         = azurerm_user_assigned_identity.plan[each.key].principal_id
 }
 
-resource "azurerm_role_assignment" "plan_state_reader" {
-  for_each = local.environments
-
-  scope                = "${azurerm_storage_account.state.id}/blobServices/default/containers/${azurerm_storage_container.state[each.key].name}"
-  role_definition_name = "Storage Blob Data Reader"
-  principal_id         = azurerm_user_assigned_identity.plan[each.key].principal_id
-}
-
-# Write-capable Azure permissions for apply identities.
 resource "azurerm_role_assignment" "apply_contributor" {
   for_each = local.environments
 
@@ -179,6 +182,38 @@ resource "azurerm_role_assignment" "apply_rbac_administrator" {
   scope                = azurerm_resource_group.environment[each.key].id
   role_definition_name = "Role Based Access Control Administrator"
   principal_id         = azurerm_user_assigned_identity.apply[each.key].principal_id
+}
+
+resource "azurerm_role_assignment" "plan_reader_aks" {
+  for_each = local.environments
+
+  scope                = azurerm_resource_group.environment_aks[each.key].id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_user_assigned_identity.plan[each.key].principal_id
+}
+
+resource "azurerm_role_assignment" "apply_contributor_aks" {
+  for_each = local.environments
+
+  scope                = azurerm_resource_group.environment_aks[each.key].id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_user_assigned_identity.apply[each.key].principal_id
+}
+
+resource "azurerm_role_assignment" "apply_rbac_administrator_aks" {
+  for_each = local.environments
+
+  scope                = azurerm_resource_group.environment_aks[each.key].id
+  role_definition_name = "Role Based Access Control Administrator"
+  principal_id         = azurerm_user_assigned_identity.apply[each.key].principal_id
+}
+
+resource "azurerm_role_assignment" "plan_state_reader" {
+  for_each = local.environments
+
+  scope                = "${azurerm_storage_account.state.id}/blobServices/default/containers/${azurerm_storage_container.state[each.key].name}"
+  role_definition_name = "Storage Blob Data Reader"
+  principal_id         = azurerm_user_assigned_identity.plan[each.key].principal_id
 }
 
 resource "azurerm_role_assignment" "apply_state_blob_data_owner" {
