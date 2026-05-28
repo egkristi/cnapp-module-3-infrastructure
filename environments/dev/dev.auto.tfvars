@@ -18,11 +18,6 @@ aks_node_count = 2
 aks_vm_size    = "Standard_D2s_v3"
 
 
-# Existing ACR
-# This is the old/current ACR that Terraform should only read, not manage.
-acr_name                = "markusscnapplab"
-acr_resource_group_name = "markuss-cnapplab"
-
 # New ACR
 # Must be lowercase alphanumeric only. No hyphens.
 # The module will create something like cnappdevabcdeacr.

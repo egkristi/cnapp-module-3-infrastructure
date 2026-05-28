@@ -73,17 +73,3 @@ output "new_acr_login_server" {
   value       = module.container_registry.login_server
 }
 
-output "existing_acr_name" {
-  description = "Name of the existing Azure Container Registry."
-  value       = data.azurerm_container_registry.existing.name
-}
-
-output "existing_acr_id" {
-  description = "ID of the existing Azure Container Registry."
-  value       = data.azurerm_container_registry.existing.id
-}
-
-output "existing_acr_login_server" {
-  description = "Login server URL of the existing Azure Container Registry."
-  value       = data.azurerm_container_registry.existing.login_server
-}
