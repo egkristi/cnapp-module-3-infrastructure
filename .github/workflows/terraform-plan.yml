@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   plan:
-    name: Terraform plan (dev)
+    name: Terraform plan (pr)
     uses: ./.github/workflows/terraform-plan-reusable.yml
     permissions:
       contents: read
@@ -19,6 +19,7 @@ jobs:
       pull-requests: read
     with:
       environment: dev
+      deploy_to_env: false
       artifact_name: pr-tfplan
     secrets: inherit
 

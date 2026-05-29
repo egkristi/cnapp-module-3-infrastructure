@@ -12,6 +12,11 @@ on:
         required: false
         type: string
         default: tfplan
+      deploy_to_env:
+        description: 'Deploy to environment? (yes/no)'
+        type: boolean
+        required: true
+        default: true
     outputs:
       artifact_name:
         description: "Uploaded Terraform plan artifact name."
@@ -26,7 +31,7 @@ jobs:
   plan:
     name: Terraform plan (${{ inputs.environment }})
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.deploy_to_env && inputs.environment || '' }}
 
     outputs:
       artifact_name: ${{ steps.plan_artifact.outputs.artifact_name }}
