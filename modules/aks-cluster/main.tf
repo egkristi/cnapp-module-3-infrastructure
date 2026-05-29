@@ -13,6 +13,10 @@ resource "azurerm_kubernetes_cluster" "this" {
     type = "SystemAssigned"
   }
 
+  key_vault_secrets_provider {
+    secret_rotation_enabled = false
+  }
+
   default_node_pool {
     name                        = var.default_node_pool_name
     node_count                  = var.node_count
