@@ -62,9 +62,9 @@ module "network" {
 module "aks_cluster" {
   source = "../../modules/aks-cluster"
 
-  name                     = "aks-${var.name_prefix}-dev"
-  location                 = var.location
-  resource_group_name      = data.azurerm_resource_group.environment_aks.name
+  name                = "aks-${var.name_prefix}-dev"
+  location            = var.location
+  resource_group_name = data.azurerm_resource_group.environment_aks.name
 
   dns_prefix = "aks-${var.name_prefix}-dev"
 

@@ -1,5 +1,5 @@
 // General
-location            = "norwayeast"
+location    = "norwayeast"
 name_prefix = "cnapp"
 
 // Key vault
