@@ -13,6 +13,11 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "node_resource_group" {
+  description = "Resource group where AKS will be created."
+  type        = string
+}
+
 variable "dns_prefix" {
   description = "DNS prefix for the AKS cluster."
   type        = string

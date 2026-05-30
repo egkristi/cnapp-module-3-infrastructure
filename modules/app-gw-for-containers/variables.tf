@@ -44,11 +44,6 @@ variable "aks_oidc_issuer_url" {
   type        = string
 }
 
-variable "aks_node_resource_group_name" {
-  description = "AKS managed node resource group name."
-  type        = string
-}
-
 variable "alb_controller_namespace" {
   description = "Kubernetes namespace where ALB Controller will run."
   type        = string

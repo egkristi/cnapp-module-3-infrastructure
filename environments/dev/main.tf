@@ -6,6 +6,10 @@ data "azurerm_resource_group" "environment_aks" {
   name = "rg-${var.name_prefix}-dev-aks"
 }
 
+data "azurerm_resource_group" "environment_aks_nodes" {
+  name = "rg-${var.name_prefix}-dev-aks-nodes"
+}
+
 module "federated_id_for_deployment" {
   source = "../../modules/federated-id-for-deployment"
 
@@ -65,6 +69,7 @@ module "aks_cluster" {
   name                = "aks-${var.name_prefix}-dev"
   location            = var.location
   resource_group_name = data.azurerm_resource_group.environment_aks.name
+  node_resource_group = data.azurerm_resource_group.environment_aks_nodes.name
 
   dns_prefix = "aks-${var.name_prefix}-dev"
 
@@ -92,7 +97,6 @@ module "app_gateway_for_containers" {
 
   alb_identity_name            = "id-alb-${var.name_prefix}-dev"
   aks_oidc_issuer_url          = module.aks_cluster.oidc_issuer_url
-  aks_node_resource_group_name = module.aks_cluster.node_resource_group
   alb_controller_namespace     = var.alb_controller_namespace
 
   tags = merge(var.tags, {
@@ -138,3 +142,11 @@ resource "azurerm_role_assignment" "deployment_aks_cluster_user" {
   role_definition_name = "Azure Kubernetes Service Cluster User Role"
   principal_id         = module.federated_id_for_deployment.github_actions_deploy_principal_id
 }
+
+resource "azurerm_role_assignment" "alb_reader_on_aks_node_rg" {
+  scope                = data.azurerm_resource_group.environment_aks_nodes.id
+  role_definition_name = "Reader"
+  principal_id         = module.app_gateway_for_containers.alb_identity_principal_id
+}
+
+

@@ -55,16 +55,6 @@ resource "azurerm_federated_identity_credential" "alb_controller" {
   audience = ["api://AzureADTokenExchange"]
 }
 
-data "azurerm_resource_group" "aks_node" {
-  name = var.aks_node_resource_group_name
-}
-
-resource "azurerm_role_assignment" "alb_reader_on_aks_node_rg" {
-  scope                = data.azurerm_resource_group.aks_node.id
-  role_definition_name = "Reader"
-  principal_id         = azurerm_user_assigned_identity.alb_controller.principal_id
-}
-
 resource "azurerm_role_assignment" "alb_config_manager_on_rg" {
   scope                = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.resource_group_name}"
   role_definition_name = "AppGw for Containers Configuration Manager"

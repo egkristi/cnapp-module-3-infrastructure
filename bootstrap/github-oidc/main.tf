@@ -16,6 +16,11 @@ locals {
     env => "rg-${var.name_prefix}-${env}"
   }
 
+  aks_resource_group_names = {
+    for env in local.environments :
+    env => "${local.environment_resource_group_names[env]}-aks"
+  }
+
   aks_node_resource_group_names = {
     for env in local.environments :
     env => "${local.environment_resource_group_names[env]}-aks-nodes"
@@ -92,7 +97,18 @@ resource "azurerm_resource_group" "environment" {
 resource "azurerm_resource_group" "environment_aks" {
   for_each = local.environments
 
-  name     = "${local.environment_resource_group_names[each.key]}-aks"
+  name     = local.aks_resource_group_names[each.key]
+  location = var.location
+
+  tags = merge(local.common_tags, {
+    environment = each.key
+  })
+}
+
+resource "azurerm_resource_group" "environment_aks_nodes" {
+  for_each = local.environments
+
+  name     = local.aks_node_resource_group_names[each.key]
   location = var.location
 
   tags = merge(local.common_tags, {
@@ -249,5 +265,21 @@ resource "azurerm_role_assignment" "apply_subscription_rbac_administrator" {
 
   scope                = data.azurerm_subscription.current.id
   role_definition_name = "Role Based Access Control Administrator"
+  principal_id         = azurerm_user_assigned_identity.apply[each.key].principal_id
+}
+
+resource "azurerm_role_assignment" "plan_reader_aks_nodes" {
+  for_each = local.environments
+
+  scope                = azurerm_resource_group.environment_aks_nodes[each.key].id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_user_assigned_identity.plan[each.key].principal_id
+}
+
+resource "azurerm_role_assignment" "apply_contributor_aks_nodes" {
+  for_each = local.environments
+
+  scope                = azurerm_resource_group.environment_aks_nodes[each.key].id
+  role_definition_name = "Contributor"
   principal_id         = azurerm_user_assigned_identity.apply[each.key].principal_id
 }
