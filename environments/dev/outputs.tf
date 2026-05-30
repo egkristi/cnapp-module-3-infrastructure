@@ -45,7 +45,7 @@ output "alb_identity_principal_id" {
 
 output "azure_client_id" {
   description = "Set this as GitHub Environment variable AZURE_CLIENT_ID."
-  value       = module.federated_id_for_deployment.azure_client_id
+  value       = module.federated_id_for_deployment.github_actions_deploy_client_id
 }
 
 output "new_acr_name" {

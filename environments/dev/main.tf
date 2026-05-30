@@ -120,14 +120,21 @@ resource "azurerm_role_assignment" "aks_new_acr_pull" {
   principal_id         = module.aks_cluster.kubelet_identity_object_id
 }
 
+resource "azurerm_role_assignment" "deployment_acr_push" {
+  scope                = module.container_registry.id
+  role_definition_name = "AcrPush"
+  principal_id         = module.federated_id_for_deployment.github_actions_push_principal_id
+  principal_type       = "ServicePrincipal"
+}
+
 resource "azurerm_role_assignment" "deployment_key_vault_secrets_user" {
   scope                = module.key_vault.id
   role_definition_name = "Key Vault Secrets User"
-  principal_id         = module.federated_id_for_deployment.github_actions_principal_id
+  principal_id         = module.federated_id_for_deployment.github_actions_deploy_principal_id
 }
 
 resource "azurerm_role_assignment" "deployment_aks_cluster_user" {
   scope                = module.aks_cluster.id
   role_definition_name = "Azure Kubernetes Service Cluster User Role"
-  principal_id         = module.federated_id_for_deployment.github_actions_principal_id
+  principal_id         = module.federated_id_for_deployment.github_actions_deploy_principal_id
 }

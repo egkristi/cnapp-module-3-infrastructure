@@ -47,6 +47,13 @@ output "environment_resource_groups" {
   }
 }
 
+output "environment_aks_resource_groups" {
+  description = "Environment resource groups per environment."
+  value = {
+    for env, rg in azurerm_resource_group.environment_aks : env => rg.name
+  }
+}
+
 output "plan_identities" {
   description = "Read-only GitHub Actions plan managed identity details per environment."
   value = {

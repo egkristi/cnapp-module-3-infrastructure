@@ -6,18 +6,36 @@ data "azurerm_resource_group" "environment_aks" {
   name = "rg-${var.name_prefix}-dev-aks"
 }
 
-resource "azurerm_user_assigned_identity" "github_actions" {
-  name                = var.name
+resource "azurerm_user_assigned_identity" "github_actions_deploy" {
+  name                = "${var.name}-deploy"
   location            = var.location
   resource_group_name = var.resource_group_name
 }
 
-resource "azurerm_federated_identity_credential" "github_environment" {
+resource "azurerm_user_assigned_identity" "github_actions_push" {
+  name                = "${var.name}-push"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_federated_identity_credential" "github_environment_deploy" {
   for_each = toset(var.github_environments)
 
   name                = "github-${var.github_repository}-${each.key}"
   resource_group_name = var.resource_group_name
-  parent_id           = azurerm_user_assigned_identity.github_actions.id
+  parent_id           = azurerm_user_assigned_identity.github_actions_deploy.id
+
+  audience = ["api://AzureADTokenExchange"]
+  issuer   = "https://token.actions.githubusercontent.com"
+  subject  = "repo:${var.github_organization}/${var.github_repository}:environment:${each.key}"
+}
+
+resource "azurerm_federated_identity_credential" "github_environment_push" {
+  for_each = toset(var.github_environments)
+
+  name                = "github-${var.github_repository}-${each.key}-push"
+  resource_group_name = var.resource_group_name
+  parent_id           = azurerm_user_assigned_identity.github_actions_push.id
 
   audience = ["api://AzureADTokenExchange"]
   issuer   = "https://token.actions.githubusercontent.com"
@@ -36,7 +54,7 @@ resource "azurerm_role_assignment" "terraform_resource_group" {
 
   scope                = each.value
   role_definition_name = var.role_definition_name
-  principal_id         = azurerm_user_assigned_identity.github_actions.principal_id
+  principal_id         = azurerm_user_assigned_identity.github_actions_deploy.principal_id
 }
 
 
