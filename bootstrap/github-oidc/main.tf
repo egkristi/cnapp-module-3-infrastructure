@@ -222,6 +222,12 @@ resource "azurerm_role_assignment" "plan_state_reader" {
   principal_id         = azurerm_user_assigned_identity.plan[each.key].principal_id
 }
 
+resource "azurerm_role_assignment" "dev_plan_aks_cluster_user" {
+  scope                = azurerm_resource_group.environment_aks["dev"].id
+  role_definition_name = "Azure Kubernetes Service Cluster User Role"
+  principal_id         = azurerm_user_assigned_identity.plan["dev"].principal_id
+}
+
 resource "azurerm_role_assignment" "apply_state_blob_data_owner" {
   for_each = local.environments
 
