@@ -33,6 +33,12 @@ resource "azurerm_role_assignment" "administrators" {
   principal_type       = "ServicePrincipal"
 }
 
+resource "azurerm_role_assignment" "kv_role" {
+  scope = azurerm_key_vault.this.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id = data.azurerm_client_config.current.object_id
+}
+
 resource "azurerm_role_assignment" "secrets_users" {
   for_each = toset(var.secrets_user_principal_ids)
 
