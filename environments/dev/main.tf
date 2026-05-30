@@ -1,13 +1,17 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "4.49.0"
+    }
+  }
+}
 data "azurerm_resource_group" "environment" {
   name = "rg-${var.name_prefix}-dev"
 }
 
 data "azurerm_resource_group" "environment_aks" {
   name = "rg-${var.name_prefix}-dev-aks"
-}
-
-data "azurerm_resource_group" "environment_aks_nodes" {
-  name = "rg-${var.name_prefix}-dev-aks-nodes"
 }
 
 module "federated_id_for_deployment" {
@@ -69,7 +73,6 @@ module "aks_cluster" {
   name                = "aks-${var.name_prefix}-dev"
   location            = var.location
   resource_group_name = data.azurerm_resource_group.environment_aks.name
-  node_resource_group = data.azurerm_resource_group.environment_aks_nodes.name
 
   dns_prefix = "aks-${var.name_prefix}-dev"
 
@@ -143,8 +146,12 @@ resource "azurerm_role_assignment" "deployment_aks_cluster_user" {
   principal_id         = module.federated_id_for_deployment.github_actions_deploy_principal_id
 }
 
+data "azurerm_resource_group" "aks_node_resource_group" {
+  name = module.aks_cluster.node_resource_group
+}
+
 resource "azurerm_role_assignment" "alb_reader_on_aks_node_rg" {
-  scope                = data.azurerm_resource_group.environment_aks_nodes.id
+  scope                = data.azurerm_resource_group.aks_node_resource_group.id
   role_definition_name = "Reader"
   principal_id         = module.app_gateway_for_containers.alb_identity_principal_id
 }
