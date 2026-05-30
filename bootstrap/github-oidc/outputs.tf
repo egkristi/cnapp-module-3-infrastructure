@@ -90,13 +90,15 @@ output "github_environment_variable_reference" {
     }
 
     dev_environment_variables = {
-      AZURE_CLIENT_ID     = azurerm_user_assigned_identity.apply["dev"].client_id
+      AZURE_PLAN_CLIENT_ID     = azurerm_user_assigned_identity.plan["dev"].client_id
+      AZURE_APPLY_CLIENT_ID     = azurerm_user_assigned_identity.apply["dev"].client_id
       RESOURCE_GROUP_NAME = local.environment_resource_group_names["dev"]
       TF_STATE_CONTAINER  = azurerm_storage_container.state["dev"].name
     }
 
     prod_environment_variables = {
-      AZURE_CLIENT_ID     = azurerm_user_assigned_identity.apply["prod"].client_id
+      AZURE_PLAN_CLIENT_ID     = azurerm_user_assigned_identity.plan["prod"].client_id
+      AZURE_APPLY_CLIENT_ID     = azurerm_user_assigned_identity.apply["prod"].client_id
       RESOURCE_GROUP_NAME = local.environment_resource_group_names["prod"]
       TF_STATE_CONTAINER  = azurerm_storage_container.state["prod"].name
     }
