@@ -98,9 +98,9 @@ module "app_gateway_for_containers" {
   association_name      = "assoc-${var.name_prefix}-dev"
   association_subnet_id = module.network.agfc_subnet_id
 
-  alb_identity_name            = "id-alb-${var.name_prefix}-dev"
-  aks_oidc_issuer_url          = module.aks_cluster.oidc_issuer_url
-  alb_controller_namespace     = var.alb_controller_namespace
+  alb_identity_name        = "id-alb-${var.name_prefix}-dev"
+  aks_oidc_issuer_url      = module.aks_cluster.oidc_issuer_url
+  alb_controller_namespace = var.alb_controller_namespace
 
   tags = merge(var.tags, {
     service = "app-gateway-for-containers"
