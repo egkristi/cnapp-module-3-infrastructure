@@ -15,7 +15,6 @@ on:
       deploy_to_env:
         description: 'Deploy to environment? (yes/no)'
         type: boolean
-        required: true
         default: true
     outputs:
       artifact_name:
