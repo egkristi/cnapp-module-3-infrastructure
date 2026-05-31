@@ -68,3 +68,22 @@ output "new_acr_login_server" {
   value       = module.container_registry.login_server
 }
 
+output "app_gateway_for_containers_name" {
+  description = "Application Gateway for Containers name."
+  value       = module.app_gateway_for_containers.name
+}
+
+output "app_gateway_for_containers_frontend_name" {
+  description = "Application Gateway for Containers frontend name."
+  value       = module.app_gateway_for_containers.frontend_name
+}
+
+output "environment_aks_resource_groups" {
+  description = "Environment resource groups per environment."
+  value = data.azurerm_resource_group.environment_aks.name
+}
+
+output "alb_identity_id" {
+  description = "Resource ID of the ALB Controller managed identity."
+  value       = module.app_gateway_for_containers.alb_identity_id
+}
