@@ -89,7 +89,7 @@ terraform output
 
 You need these output values:
 
-- `azure_client_id`
+- `AZURE_APPLY_CLIENT_ID`
 - `state_storage_account_name`
 
 ## 5. Update the backend files
