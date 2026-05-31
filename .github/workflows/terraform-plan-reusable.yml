@@ -53,6 +53,7 @@ jobs:
 
       - name: Set plan artifact name
         id: plan_artifact
+        working-directory: .
         run: echo "artifact_name=${{ inputs.artifact_name }}-${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
 
       - name: Azure login using OIDC
@@ -82,14 +83,19 @@ jobs:
       - name: Show Terraform plan
         run: terraform show -no-color tfplan
 
-      - name: Show Terraform plan
-        run: terraform show -json -no-color tfplan | jq > tfplan.json
+      - name: Export Terraform plan as JSON
+        run: terraform show -json tfplan > tfplan.json
+
+      - name: Stage Terraform plan artifact
+        working-directory: .
+        run: |
+          mkdir -p terraform-plan-artifact
+          cp environments/${{ inputs.environment }}/tfplan terraform-plan-artifact/tfplan
+          cp environments/${{ inputs.environment }}/tfplan.json terraform-plan-artifact/tfplan.json
 
       - name: Upload Terraform plan
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.plan_artifact.outputs.artifact_name }}
-          path: |
-            environments/${{ inputs.environment }}/tfplan
-            environments/${{ inputs.environment }}/tfplan.json
+          path: terraform-plan-artifact/
           retention-days: 1
