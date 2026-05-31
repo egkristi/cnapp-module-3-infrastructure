@@ -145,6 +145,7 @@ Go to actions in your repo, allow workflows
 
 Add the `azure_client_id` to your GitHub repository "Repositroy Variables":
 
+fetch dev AZURE_PLAN_CLIENT_ID
 Go to Settings > Secrets and Variables > actions > Variables > New repository variable
 
 ```text
@@ -157,11 +158,15 @@ change the following files:
 
 env/dev/dev.auto.tfvars
 
+## 9. format
+
+run terraform fmt --recursive on root
+
 ## 10. Push to GitHub
 
 git add .
 git commit -m "run bootstrap"
-git push"
+git push
 
 open commits, go to actions, enable
 
