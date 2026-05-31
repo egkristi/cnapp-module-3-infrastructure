@@ -118,12 +118,28 @@ For local development, Terraform can still use your Azure CLI login. In GitHub A
 
 ## 6. Create GitHub Environments
 
-In GitHub, create two Environments:
+In GitHub go to your fork: https://github.com/msilabben/cnapp-module-3-infrastructure-testbruker1/settings
+Go to settings, Environments, create two Environments:
 
 - `dev`
 - `prod`
+Environment variables:
+AZURE_CLIENT_ID: <value of dev_environment_variables/AZURE_APPLY_CLIENT_ID>
 
-For `prod`, configure required reviewers before deployments are allowed.
+For `prod`, configure required reviewers before deployments are allowed. Add yourself
+
+
+Also change env/dev/dev.auto.tfvars
+key_vault_administrator_principal_ids = [value of <dev_environment_variables/AZURE_APPLY_CLIENT_ID>]
+both dev and prod
+
+and
+github_repository   = "cnapp-module-2-application-testbruker1"
+
+
+## 6. 1
+Go to actions in your repo, allow workflows
+
 
 ## 7. Add GitHub Environment variables
 
@@ -135,34 +151,19 @@ Go to Settings > Secrets and Variables > actions > Variables > New repository va
 AZURE_CLIENT_ID       = <bootstrap output azure_client_id>
 ```
 
-## 8. Configure local tfvars
+## 8
 
-```bash
-cd ../..
-cp environments/dev/terraform.tfvars.example environments/dev/terraform.tfvars
-cp environments/prod/terraform.tfvars.example environments/prod/terraform.tfvars
-```
+change the following files:
 
-Edit both files and set your actual subscription ID and resource group names.
-
-## 9. Initialize and test locally
-
-```bash
-./scripts/tf.sh fmt
-./scripts/tf.sh init dev
-./scripts/tf.sh validate dev
-./scripts/tf.sh plan dev
-```
-
-Prod:
-
-```bash
-./scripts/tf.sh init prod
-./scripts/tf.sh validate prod
-./scripts/tf.sh plan prod
-```
+env/dev/dev.auto.tfvars
 
 ## 10. Push to GitHub
+
+git add .
+git commit -m "run bootstrap"
+git push"
+
+open commits, go to actions, enable
 
 On pull requests, `.github/workflows/terraform-plan.yml` runs plans for `dev` and `prod`.
 
