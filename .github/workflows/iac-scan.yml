@@ -31,6 +31,7 @@ jobs:
           path: environments/${{ inputs.environment }}
 
       - name: Run Trivy
+        working-directory: environments/${{ inputs.environment }}
         run: trivy config --format sarif -o trivy_results.sarif tfplan.json
 
       - name: Upload Trivy SARIF artifact
