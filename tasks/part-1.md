@@ -146,54 +146,30 @@ AZURE_CLIENT_ID: <value of dev_environment_variables/AZURE_APPLY_CLIENT_ID>
 same with prod.
 
 For `prod`, configure required reviewers before deployments are allowed. Add yourself.
-Review what settings might be useful to enable/disble as opposed to `dev`.
+Keep the rest of the settings as is, but review what settings might be useful to enable/disble as opposed to `dev`.
 
 
 ## 7 Update infrastructure automation value
-Open the file `environments/dev/dev.auto.tfvars` and change the following values.
-These cannot be empty
-key_vault_administrator_principal_ids = [value of <dev_environment_variables/AZURE_APPLY_CLIENT_ID>]
-both dev and prod
+Open the file `environments/dev/dev.auto.tfvars`. Values in this file cannot be empty as they are needed by terraform.
+Change therefore the following value to those found in terraform output:
+key_vault_administrator_principal_ids = "<dev_environment_variables/AZURE_APPLY_CLIENT_ID>"
+github_repository   = "<your forked module 2 github repo>"
 
-and
-github_repository   = "cnapp-module-2-application-testbruker1"
-
-
-## 6. 1
-Go to actions in your repo, allow workflows
-
-
-## 7. Add GitHub Environment variables
-
-Add the `azure_client_id` to your GitHub repository "Repositroy Variables":
-
-fetch dev AZURE_PLAN_CLIENT_ID
-Go to Settings > Secrets and Variables > actions > Variables > New repository variable
-
-```text
-AZURE_CLIENT_ID       = <bootstrap output azure_client_id>
-```
-
-## 8
-
-change the following files:
-
-env/dev/dev.auto.tfvars
 
 ## 9. format
-
-run terraform fmt --recursive on root
+Fix formatting by running the following in the workspace  folder:
+`terraform fmt --recursive`
 
 ## 10. Push to GitHub
 
+cd /workspaces/cnapp-module-3-infrastructure-<your username>/
 git add .
-git commit -m "run bootstrap"
+git commit -m "Added variables. Build infrastructure"
 git push
 
-open commits, go to actions, enable
+Follow the given URL and watch the deployment in Actions in your forked repo.
 
 On pull requests, `.github/workflows/terraform-plan.yml` runs plans for `dev` and `prod`.
-
 On push to `main`, `.github/workflows/terraform-apply.yml` applies `dev`.
-
-For `prod`, run the `Terraform apply` workflow manually and select `prod`. The GitHub `prod` Environment should require approval.
+The `prod` environment has not yet been configured. But the steps to push to prod involves going to your forked repo and then Actions.
+Click on `Terraform apply` workflow manually and select `prod`. The GitHub `prod` Environment should require approval.
