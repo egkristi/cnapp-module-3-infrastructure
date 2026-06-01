@@ -87,3 +87,7 @@ output "alb_identity_id" {
   description = "Resource ID of the ALB Controller managed identity."
   value       = module.app_gateway_for_containers.alb_identity_id
 }
+
+output "key_vault_secrets_provider_identity_object_id" {
+  value = module.aks_cluster.key_vault_secrets_provider_identity_object_id
+}
