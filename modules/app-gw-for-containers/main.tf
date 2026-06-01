@@ -45,6 +45,27 @@ resource "azurerm_user_assigned_identity" "alb_controller" {
   tags = var.tags
 }
 
+resource "helm_release" "alb_controller" {
+  name             = "alb-controller"
+  repository       = "oci://mcr.microsoft.com/application-lb/charts"
+  chart            = "alb-controller"
+  version          = "1.10.28"
+
+  namespace        = var.alb_controller_namespace
+  create_namespace = true
+
+  set = [
+    {
+      name  = "albController.namespace"
+      value = var.alb_controller_namespace
+    },
+    {
+      name  = "albController.podIdentity.clientID"
+      value = azurerm_user_assigned_identity.alb_controller.client_id
+    }
+  ]
+}
+
 resource "azurerm_federated_identity_credential" "alb_controller" {
   name                = "aksfic"
   parent_id           = azurerm_user_assigned_identity.alb_controller.id

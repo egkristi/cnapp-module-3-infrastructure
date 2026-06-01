@@ -6,6 +6,16 @@ terraform {
     }
   }
 }
+
+provider "helm" {
+  kubernetes = {
+    host                   = module.aks_cluster.host
+    client_certificate     = base64decode(module.aks_cluster.client_certificate)
+    client_key             = base64decode(module.aks_cluster.client_key)
+    cluster_ca_certificate = base64decode(module.aks_cluster.cluster_ca_certificate)
+  }
+}
+
 data "azurerm_resource_group" "environment" {
   name = "rg-${var.name_prefix}-dev"
 }
@@ -105,6 +115,10 @@ module "app_gateway_for_containers" {
   tags = merge(var.tags, {
     service = "app-gateway-for-containers"
   })
+
+  providers = {
+    helm = helm
+  }
 }
 
 module "container_registry" {
