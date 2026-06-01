@@ -220,6 +220,6 @@ On push to `main`, `.github/workflows/terraform-apply.yml` applies `dev`.
 
 > **Important:** Do not manually deploy to `prod` yet.
 >
-> The `prod` environment has not been configured in this lab step. Do not run the `Terraform apply` workflow manually for `prod` unless you are explicitly instructed to do so later.
->
+> The `prod` environment has not been configured in this lab step. But once the `prod` environment has been completed, you can go to Actions in your repo and click on `Terraform apply`. Here you can clikc on "Run workflow" and select `prod` as your environment.
+> >
 > For now, only verify that the `dev` deployment runs successfully.
