@@ -1,13 +1,10 @@
-subscription_id     = "468514d9-f054-4201-8f24-55d61d90872f"
-tenant_id           = "ee1a7779-f164-43b7-a09a-e9343e8e9d91"
-location            = "norwayeast"
+name_prefix   = "<your username>"
+location      = "norwayeast"
+
 github_organization = "msilabben"
-github_repository   = "cnapp-module-3-infrastructure-alice"
-github_environments = ["dev", "prod"]
+github_repository   = "<your M3 repository>"
 
-identity_resource_group_name = "rg-github-oidc-alice"
-identity_name                = "id-github-terraform"
-
-state_resource_group_name  = "rg-tfstate-alice"
-state_storage_account_name = "st-tfstate-alice"
-state_container_name       = "tfstate"
+tags = {
+  managed_by = "terraform"
+  project    = "<your M3 repository>"
+}
