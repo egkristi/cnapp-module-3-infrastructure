@@ -144,7 +144,6 @@ jobs:
 
 
   opa:
-    if: false # Remove this to enable Policy as Code (PaC) with Open Policy Agent
     needs: [ trivy, checkov ]
     runs-on: ubuntu-22.04
     container:
@@ -155,5 +154,19 @@ jobs:
       - name: Download SARIF artifacts
         uses: actions/download-artifact@v4
 
-      - name: Verify Trivy findings
-        run: conftest test trivy-results/trivy_results.sarif --parser json --policy policy/trivy.rego
+      - name: Show downloaded artifacts
+        run: find . -maxdepth 4 -type f -print
+
+      - name: Verify Trivy plan findings
+        run: |
+          conftest test \
+            trivy-results-${{ inputs.environment }}/trivy_tfplan.sarif \
+            --parser json \
+            --policy policy/trivy.rego
+
+      - name: Verify Trivy Terraform findings
+        run: |
+          conftest test \
+            trivy-results-${{ inputs.environment }}/trivy_terraform.sarif \
+            --parser json \
+            --policy policy/trivy.rego
