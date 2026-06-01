@@ -1,13 +1,31 @@
-## Part 0: build your app
+## Part 3: Deploy your app
 
-Go to your module 2 fork, create a new codespace.
+### 1. Create codespace
+Create a new codespace in your module 2 fork. 
+Sign in to Azure using the steps provided in `part-1.md`
 
-You need the following environment variables.
 
+### 2. Add environment variables
+
+Module 2 requires multiple environment variables to be able to deploy the application to the correct infrastructure.
+Create a new Environment variable called `dev`.  
+Using the output generated from `terraform output` in the previous task or the Azure portal, you need to create and fill in the following variables:
+
+- `ACR_NAME`: <???>
+- `AGFC_FRONTEND_NAME`: <???>
+- `AGFC_NAME`: <???>
+- `AKS_CLUSTER`: <???>
+- `AZURE_DEPLOY_CLIENT_ID`: <???>
+- `AZURE_PUSH_CLIENT_ID`: <???>
+- `AZURE_RESOURCE_GROUP`: <???>
+- `KEYVAULT_NAME`: <???>
+- `KEYVAULT_IDENTITY_CLIENT_ID`: <???>
+
+
+### 3. 
 They are outputs from the initial terraform apply run in part 1.
-Go to:
-https://github.com/msilabben/cnapp-module-3-infrastructure-testbruker1/actions
-identify a workflow running on main.
+Go to Actions in your forked repo module 2. 
+One of your prevsious You will see identify a workflow running on main.
 Go into Terraform apply dev > Terraform apply, scroll to the bottom.
 You should see outputs on the following format:
 
@@ -37,8 +55,6 @@ AKS_CLUSTER
 AZURE_DEPLOY_CLIENT_ID (github push)
 AZURE_PUSH_CLIENT_ID (github deploy)
 AZURE_RESOURCE_GROUP
-IMAGE_NAME_BACKEND
-IMAGE_NAME_FRONTEND
 ALB_CONTROLLER_ID
 
 AZURE_SUBSCRIPTION_ID: 468514d9-f054-4201-8f24-55d61d90872f
