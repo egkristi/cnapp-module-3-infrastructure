@@ -33,5 +33,6 @@ agfc_subnet_address_prefixes = ["10.50.4.0/24"]
 alb_controller_namespace = "azure-alb-system"
 
 github_organization = "msilabben"
+// Replace repo with your forked module 2 repo name
 github_repository   = "cnapp-module-2-application"
 github_environments = ["dev", "prod"]
