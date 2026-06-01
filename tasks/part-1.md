@@ -218,6 +218,8 @@ On pull requests, `.github/workflows/terraform-plan.yml` runs plans for `dev` an
 
 On push to `main`, `.github/workflows/terraform-apply.yml` applies `dev`.
 
-The `prod` environment has not yet been configured. The steps to push to `prod` involve going to your forked repository and then `Actions`.
-
-Click the `Terraform apply` workflow manually and select `prod`. The GitHub `prod` environment should require approval.
+> **Important:** Do not manually deploy to `prod` yet.
+>
+> The `prod` environment has not been configured in this lab step. Do not run the `Terraform apply` workflow manually for `prod` unless you are explicitly instructed to do so later.
+>
+> For now, only verify that the `dev` deployment runs successfully.
