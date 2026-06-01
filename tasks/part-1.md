@@ -1,21 +1,40 @@
-# Part 0: Account creationg
+# Part 0: Prerequisites
 
-You will be given a user on the format:
+Make sure you have:
+- The Microsoft Authenticator app installed.
+- A GitHub account
+
+## Account creation
+
+You will be given a use with access to the lab subscription. This user is on the format:
 username: cnappuser<number>@mnelab.onmicrosoft.com
 password: mnemonicCNAPPlabb<number>
 
-## Login
-Make sure to have the Microsoft Authenticator app installed.
+Your username on the format cnappuser<number> will from now on be referred to as <your username>
 
 Go to portal.azure.com and sign in to your account.
-You will be asked to both change password and setup the authenticator app
+You will be asked to both change password and setup the authenticator app.
+Store the password somewhere safe.
 Follow the steps provided. 
 When you have signed into the account, search for "Subscriptions". 
 You should now be able to the see subscription "Sandbox"
 
 
-# Part 1: Setup
+## Forking the repos
 
+In this lab you will be building the infrastructure to host an application and install the application on the created infratructure.
+For this you will need to fork two repos:
+- https://github.com/msilabben/cnapp-module-3-infrastructure
+- https://github.com/msilabben/cnapp-module-2-application
+
+When forking these repoes, set the owner to "msilabben" and append your username to the repository name:
+cnapp-module-3-infrastructure-<your username>
+cnapp-module-2-application-<your username>
+
+Lastly, workflows must be enabled on both workspaces. In your forked repos, go to Actions and click on Enable workflows.
+
+# Part 1: Setup
+For the following steps we will be using the forked cnapp-module-3-infrastructure repo unless stated otherwise.
 In this part we will be preparing our azure environment for use with terraform.
 
 Terraform needs some existing resources to be able to run from pipeline. These include:
@@ -33,11 +52,11 @@ The devcontainer installs:
 - Azure CLI
 - GitHub CLI
 
+  
 ## 2. Authenticate locally
 
 ```bash
-az login
-az account set --subscription "<subscription-id>"
+az login --use-device-code
 ```
 
 Confirm the active subscription:
@@ -45,6 +64,7 @@ Confirm the active subscription:
 ```bash
 az account show --query "{name:name, id:id, tenantId:tenantId}" -o table
 ```
+You should see Sandbox.
 
 ## 3. Configure bootstrap variables
 
@@ -55,19 +75,16 @@ cp bootstrap/github-oidc/terraform.tfvars.example bootstrap/github-oidc/terrafor
 Edit `bootstrap/github-oidc/terraform.tfvars`:
 
 ```hcl
-subscription_id     = "468514d9-f054-4201-8f24-55d61d90872f"
-tenant_id           = "ee1a7779-f164-43b7-a09a-e9343e8e9d91"
-location            = "norwayeast"
+name_prefix   = "<your username>"
+location      = "norwayeast"
+
 github_organization = "msilabben"
-github_repository   = "cnapp-module-3-infrastructure-<TODO>"
-github_environments = ["dev", "prod"]
+github_repository   = "<your M3 repository>"
 
-identity_resource_group_name = "rg-github-oidc-<TODO>"
-identity_name                = "id-github-terraform-<TODO>"
-
-state_resource_group_name  = "rg-tfstate-<TODO>"
-state_storage_account_name = "st-tfstate-<TODO>"
-state_container_name       = "tfstate-<TODO>"
+tags = {
+  managed_by = "terraform"
+  project    = "<your M3 repository>"
+}
 ```
 
 ## 4. Run the bootstrap Terraform
@@ -81,32 +98,33 @@ terraform plan
 terraform apply
 ```
 
-Save the outputs:
+Check the following output:
 
 ```bash
 terraform output
 ```
+Save the output for later.
 
-You need these output values:
+You currently need these output values:
 
-- `AZURE_APPLY_CLIENT_ID`
+- `dev_environment_variables = {AZURE_APPLY_CLIENT_ID}`
+- `state_resource_group_name`
 - `state_storage_account_name`
 
 ## 5. Update the backend files
 
-Replace `REPLACE_WITH_BOOTSTRAP_OUTPUT` in these files with the `state_storage_account_name` output:
+Replace the values in the following file with those from the terraform output:
 
 - `environments/dev/backend.tf`
-- `environments/prod/backend.tf`
 
 Example:
 
 ```hcl
 terraform {
   backend "azurerm" {
-    resource_group_name  = "rg-tfstate-<TODO>"
-    storage_account_name = "st-tfstate-<TODO>"
-    container_name       = "tfstate-<TODO>"
+    resource_group_name  = "<state_resource_group_name>"
+    storage_account_name = "<state_storage_account_name>"
+    container_name       = "tfstate-dev"
     key                  = "dev.terraform.tfstate"
     use_oidc             = true
     use_azuread_auth     = true
@@ -118,18 +136,22 @@ For local development, Terraform can still use your Azure CLI login. In GitHub A
 
 ## 6. Create GitHub Environments
 
-In GitHub go to your fork: https://github.com/msilabben/cnapp-module-3-infrastructure-testbruker1/settings
+In GitHub go to your fork: https://github.com/msilabben/cnapp-module-3-infrastructure-<your username>/settings
 Go to settings, Environments, create two Environments:
 
 - `dev`
 - `prod`
 Environment variables:
 AZURE_CLIENT_ID: <value of dev_environment_variables/AZURE_APPLY_CLIENT_ID>
+same with prod.
 
-For `prod`, configure required reviewers before deployments are allowed. Add yourself
+For `prod`, configure required reviewers before deployments are allowed. Add yourself.
+Review what settings might be useful to enable/disble as opposed to `dev`.
 
 
-Also change env/dev/dev.auto.tfvars
+## 7 Update infrastructure automation value
+Open the file `environments/dev/dev.auto.tfvars` and change the following values.
+These cannot be empty
 key_vault_administrator_principal_ids = [value of <dev_environment_variables/AZURE_APPLY_CLIENT_ID>]
 both dev and prod
 
