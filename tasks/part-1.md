@@ -185,10 +185,11 @@ environments/dev/dev.auto.tfvars
 ```
 
 Values in this file cannot be empty because they are required by Terraform.
-
+This means that even though they have default values, these must be changed.
 Change the following values to the values found in the Terraform output:
 
 ```hcl
+name_prefix = "<your username>"
 key_vault_administrator_principal_ids = "<dev_environment_variables/AZURE_APPLY_CLIENT_ID>"
 github_repository   = "<your forked module 2 github repo>"
 ```
