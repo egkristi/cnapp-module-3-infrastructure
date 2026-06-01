@@ -88,6 +88,6 @@ output "alb_identity_id" {
   value       = module.app_gateway_for_containers.alb_identity_id
 }
 
-output "key_vault_secrets_provider_identity_object_id" {
-  value = module.aks_cluster.key_vault_secrets_provider_identity_object_id
+output "key_vault_secrets_provider_identity_client_id" {
+  value = module.aks_cluster.key_vault_secrets_provider_identity_client_id
 }
