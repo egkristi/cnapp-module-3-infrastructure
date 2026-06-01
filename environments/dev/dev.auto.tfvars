@@ -1,5 +1,7 @@
 // General
 location    = "norwayeast"
+// Replace cnapp with your username:
+// name_prefix = "<your username>"
 name_prefix = "cnapp"
 
 // Key vault
@@ -13,7 +15,6 @@ aks_node_count = 2
 aks_vm_size    = "Standard_D2s_v3"
 
 
-# New ACR
 # Must be lowercase alphanumeric only. No hyphens.
 # The module will create something like cnappdevabcdeacr.
 acr_sku           = "Standard"
