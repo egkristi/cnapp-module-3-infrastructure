@@ -1,5 +1,5 @@
 // General
-location    = "norwayeast"
+location = "norwayeast"
 // Replace cnapp with your username:
 // name_prefix = "<your username>"
 name_prefix = "cnapp"

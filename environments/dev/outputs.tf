@@ -80,7 +80,7 @@ output "app_gateway_for_containers_frontend_name" {
 
 output "environment_aks_resource_groups" {
   description = "Environment resource groups per environment."
-  value = data.azurerm_resource_group.environment_aks.name
+  value       = data.azurerm_resource_group.environment_aks.name
 }
 
 output "alb_identity_id" {

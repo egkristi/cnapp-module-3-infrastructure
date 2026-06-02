@@ -15,36 +15,61 @@ on:
 
 jobs:
   trivy:
-    defaults:
-      run:
-        working-directory: environments/${{ inputs.environment }}
+    name: Trivy scan (${{ inputs.environment }})
     runs-on: ubuntu-22.04
+
     container:
       image: aquasec/trivy:0.70.0
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Download Terraform plan
         uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.artifact_name }}
-          path: environments/${{ inputs.environment }}
+          path: trivy-input
 
-      - name: Run Trivy
-        working-directory: environments/${{ inputs.environment }}
-        run: trivy config --format sarif -o trivy_results.sarif tfplan.json
+      - name: Validate downloaded plan artifact
+        run: |
+          find trivy-input -maxdepth 3 -type f -print
+          test -f trivy-input/tfplan.json
 
-      - name: Upload Trivy SARIF artifact
+      - name: Run Trivy on Terraform plan
+        run: |
+          trivy config \
+            --format sarif \
+            --output trivy_tfplan.sarif \
+            trivy-input/tfplan
+
+      - name: Run Trivy on Terraform source
+        run: |
+          trivy config \
+            --format sarif \
+            --output trivy_terraform.sarif \
+            environments/${{ inputs.environment }}
+
+      - name: Upload Trivy SARIF artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: trivy-results
-          path: environments/${{ inputs.environment }}/trivy_results.sarif
+          name: trivy-results-${{ inputs.environment }}
+          path: |
+            trivy_tfplan.sarif
+            trivy_terraform.sarif
+          if-no-files-found: error
 
-      - name: Upload Trivy SARIF to GitHub
+      - name: Upload Terraform plan SARIF to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: environments/${{ inputs.environment }}/trivy_results.sarif
-          category: trivy
+          sarif_file: trivy_tfplan.sarif
+          category: trivy-tfplan-${{ inputs.environment }}
+
+      - name: Upload Terraform source SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy_terraform.sarif
+          category: trivy-terraform-${{ inputs.environment }}
 
   checkov:
     defaults:
@@ -119,8 +144,8 @@ jobs:
 
 
   opa:
-    if: false # Remove this to enable Policy as Code (PaC) with Open Policy Agent
     needs: [ trivy, checkov ]
+    if: false
     runs-on: ubuntu-22.04
     container:
       image: openpolicyagent/conftest:v0.59.0
@@ -130,5 +155,19 @@ jobs:
       - name: Download SARIF artifacts
         uses: actions/download-artifact@v4
 
-      - name: Verify Trivy findings
-        run: conftest test trivy-results/trivy_results.sarif --parser json --policy policy/trivy.rego
+      - name: Show downloaded artifacts
+        run: find . -maxdepth 4 -type f -print
+
+      - name: Verify Trivy plan findings
+        run: |
+          conftest test \
+            trivy-results-${{ inputs.environment }}/trivy_tfplan.sarif \
+            --parser json \
+            --policy policy/trivy.rego
+
+      - name: Verify Trivy Terraform findings
+        run: |
+          conftest test \
+            trivy-results-${{ inputs.environment }}/trivy_terraform.sarif \
+            --parser json \
+            --policy policy/trivy.rego
