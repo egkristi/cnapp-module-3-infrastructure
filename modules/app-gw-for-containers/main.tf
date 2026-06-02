@@ -46,10 +46,10 @@ resource "azurerm_user_assigned_identity" "alb_controller" {
 }
 
 resource "helm_release" "alb_controller" {
-  name             = "alb-controller"
-  repository       = "oci://mcr.microsoft.com/application-lb/charts"
-  chart            = "alb-controller"
-  version          = "1.10.28"
+  name       = "alb-controller"
+  repository = "oci://mcr.microsoft.com/application-lb/charts"
+  chart      = "alb-controller"
+  version    = "1.10.28"
 
   namespace        = var.alb_controller_namespace
   create_namespace = true
