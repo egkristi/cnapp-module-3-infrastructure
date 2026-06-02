@@ -39,40 +39,57 @@ Use the outputted variables or identify manually in the Azure portal to fill inn
 - `KEYVAULT_IDENTITY_CLIENT_ID`: <???>
 
 
-### 3
+### 3. Update and publish your application images
 
 We must do a change in both the frontend and backend app.
+
 This will cause the pipeline to run which updates the frontend and backend image versions.
+
 Go into your forked module 2 repo open the following files:
+
 - `frontend/src/index.html`
 - `backend/app/main.py`
 
-Do a small change in both, like changing what text gets written by each app.
-Do:
-```
-git add.
-git commit -m "fix"
-git push
-```
+Do a small change in both, like changing what text gets written by each app before committing.
 
-watch actions complete, when done go to pull requests and click on chore main and confirm merge
-now go to actions again.
+Watch Actions complete. When it has finished, go to pull requests and click on "chore: main" and confirm merge.
 
-backend-dev and frontend-dev should now work. 
-Prod will fail, ignore this for now.
+Now go to actions again.
 
-Confirm the images were pushed by going to your container registry in azure and see the current version of both frontend and backend
+Backend-dev and frontend-dev should now be green and be deployed to your Azure Container Registry (ACR). Prod will fail, ignore this for now.
 
-Here you should see the current backend and frontend version.
-no v1.0.0 but 0.0.0
-Run workflow
+### 4. Pull the current app version to your Kubernetes cluster
+
+Go to the Azure portal. In the search bar, search for the resource group containing your ACR: `rg-<your username>-dev`
+
+In this resource group, you should see your ACR on the format: `<your username>devxxxxxxx`. ACRs must be globally unique across Azure and will therefore have a random string of characters appended to it.
+
+Inside your ACR, click on "Services" and then "Repositories".
+
+Here you should see both a frontend and backend image. What versions are present in the ACR? Is the hash of the `latest` version the same as that of one of the version numbers? 
+
+After identifying the currnet version number for both frontend and backend, go to your forked Module 2 repository under Actions. 
+
+Click on "Deploy to AKS" and then "Run Workflow". Here you should be able to fill in for which enviroment you would like to deploy and which version of both the frontend and backend.
+
+Fill in the current version numbers before running the workflow.
+
+Does the deployment finish successfully?
+
+###. 5 See your deployment
+
+In the Azure portal, search for your resource group containing your Application Gateway for Containers: `rg-<your username>-dev-aks`. Remember that the app gateway functions as an internet based frontend for the apps inside your Kubernetes cluster.
+
+Inside your resource group go into `agfc-<your username>-dev`, Settings, and then Frontends. 
+
+Try visiting your shown FQDN. Does the application work?
 
 
+## Extra
+We have just successfully deployed our app into our own created infrastructure.
 
-next go to actions in m2, deploy to ASK, run workflow, and fill in the current versions
+But so far everything has been deployed to Dev. 
 
+The Prod environment does not contain any of our created resources just yet. 
 
-
-extra:
-prod is way behind and unfinished, oh no!
-use the code from environments dev to fix environments prod
+Can you replicate the code from environments/dev and into environments/prod to deploy the same infrastructure? What about publishing an app?
