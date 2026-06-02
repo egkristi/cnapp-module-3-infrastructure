@@ -8,13 +8,21 @@ Sign in to Azure using the steps provided in `part-1.md`
 ### 2. Add environment variables
 
 Module 2 requires multiple environment variables to be able to deploy the application to the correct infrastructure.
+
 The required variables are outputted by terraform when running the main pipeline on Module 3.
+
 When committing to your Module 3 forked repo, a pipeline is run which performs `terraform apply`. 
+
 In this stage, `terraform output` is run and displayed. 
+
 Go to Actions in Module 3, identify a workflow which has run on `main`.
+
 Go into this workflow and click on `Terraform apply dev`.
+
 This job performs many steps, including `Terraform Apply`.
+
 Scroll to the bottom of this job to see outputted variables. 
+
 Save these variables.
 
 Now go to your forked Module 3 repo and create the Environment variable `dev`. 
