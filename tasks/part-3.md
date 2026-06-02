@@ -8,20 +8,17 @@ Sign in to Azure using the steps provided in `part-1.md`
 ### 2. Add environment variables
 
 Module 2 requires multiple environment variables to be able to deploy the application to the correct infrastructure.
+The required variables are outputted by terraform when running the main pipeline on Module 3.
 When committing to your Module 3 forked repo, a pipeline is run which performs `terraform apply`. 
-In this stage, terraform output is run and displayed. 
+In this stage, `terraform output` is run and displayed. 
 Go to Actions in Module 3, identify a workflow which has run on `main`.
 Go into this workflow and click on `Terraform apply dev`.
 This job performs many steps, including `Terraform Apply`.
 Scroll to the bottom of this job to see outputted variables. 
+Save these variables.
 
-
-Use these or identity manually in the Azure portal to fill inn the following Environment variables in dev
-
-
-Create  a new Environment variable called `dev`.
-
-Using the output generated from `terraform output` in the previous task or the Azure portal, you need to create and fill in the following variables:
+Now go to your forked Module 3 repo and create the Environment variable `dev`. 
+Use the outputted variables or identify manually in the Azure portal to fill inn the following Environment variables into `dev`:
 
 - `ACR_NAME`: <???>
 - `AGFC_FRONTEND_NAME`: <???>
@@ -34,17 +31,22 @@ Using the output generated from `terraform output` in the previous task or the A
 - `KEYVAULT_IDENTITY_CLIENT_ID`: <???>
 
 
+### 3
 
-next
+We must do a change in both the frontend and backend app.
+This will cause the pipeline to run which updates the frontend and backend image versions.
+Go into your forked module 2 repo open the following files:
+- `frontend/src/index.html`
+- `backend/app/main.py`
 
-We must trigger a change in both the frontend and backend app. 
-So identity both and add some arbitrary text.
-For example ...
-
+Do a small change in both, like changing what text gets written by each app.
+Do:
+```
 git add.
 git commit -m "fix"
-(this commit must include a "fix:" in it)
 git push
+```
+
 watch actions complete, when done go to pull requests and click on chore main and confirm merge
 now go to actions again.
 
